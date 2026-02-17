@@ -1,12 +1,12 @@
-const CACHE_NAME = 'dock-barcode-cache-v1';
+const CACHE_NAME = 'dock-barcode-cache-v2';
 const urlsToCache = [
-  '/tforce',
-  '/tforce/index.html',
-  '/tforce/manifest.json',
-  '/tforce/service-worker.js',
-  '/tforce/favicon.ico',
-  '/tforce/icon-192.png',
-  '/tforce/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './service-worker.js',
+  './favicon.ico',
+  './icon-192.png',
+  './icon-512.png',
   'https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js',
   'https://unpkg.com/@zxing/library@latest'
 ];
