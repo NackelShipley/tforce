@@ -1,415 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dock Barcode Tool">
-<link rel="apple-touch-startup-image" href="assets/splash.png">
-    
-<title>Dock Barcode Tool</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dock Barcode Tool</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    /* Dynamic height for iOS Safari */
+    :root {
+      --app-height: 100vh;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-<script src="https://unpkg.com/@zxing/library@latest"></script>
+    html, body {
+      height: var(--app-height);
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #eef6fb, #e6f0e8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      box-sizing: border-box;
+    }
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f4f6f8">
+    .container {
+      width: 95%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
 
-<style>
-:root {
-    --app-height: 100vh;
-}
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: var(--app-height);
-    width: 100%;
-}
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
 
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: var(--app-height);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f4f6f8;
-    color: #333;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}
+    .camera-btn {
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #4f6ef7;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.2s;
+    }
 
-.container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 16px;
-}
+    .camera-btn:hover {
+      background: #3d57c7;
+    }
 
-header {
-    text-align: center;
-    margin-bottom: 12px;
-}
+    select, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
 
-header h1 {
-    font-size: 20px;
-    margin: 0;
-}
+    button {
+      background: #4f6ef7;
+      color: white;
+    }
 
-header p {
-    font-size: 13px;
-    color: #6b7280;
-    margin: 4px 0 0;
-}
+    button:hover {
+      background: #3d57c7;
+    }
 
-.card {
-    background: white;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-}
+    .barcode-container {
+      margin-top: 12px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
 
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-    width: 100%;
-}
+    .barcode-page {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+    }
 
-.tracking-row {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
+    .barcode-page.active {
+      display: flex;
+    }
 
-.tracking-row input {
-    flex: 1 1 auto;
-    min-width: 0;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: all 0.2s ease;
-}
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
 
-.tracking-row input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-}
+    .pagination button {
+      padding: 6px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+    }
 
-.camera-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.camera-btn:hover {
-    background: #f3f4f6;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-select {
-    flex: 1 1 auto;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-
-button {
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s;
-}
-
-.btn-primary { background:#2563eb; color:white; }
-.btn-secondary { background:#e5e7eb; }
-.btn-danger { background:#dc2626; color:white; }
-
-button:hover { opacity:0.9; }
-
-#barcodeViewer {
-    min-height: 180px;
-    margin-top: 10px;
-}
-
-.barcode-item {
-    display: none;
-    padding: 20px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background: #fafafa;
-    text-align: center;
-    animation: fadeIn 0.25s ease;
-}
-
-.barcode-item.active { display: block; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.tracking-label {
-    margin-top: 10px;
-    font-weight: 600;
-}
-
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin-top: 15px;
-}
-
-.arrow-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.arrow-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-}
-
-.arrow-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.indicator {
-    font-weight: 600;
-    font-size: 13px;
-}
-
-footer {
-    text-align: center;
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: auto;
-}
-
-#scannerModal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 1000;
-}
-
-#scannerContainer {
-    position: relative;
-}
-
-#scannerModal video {
-    width: 90vw;
-    max-width: 420px;
-    border-radius: 12px;
-}
-
-.scan-frame {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 70%;
-    height: 40%;
-    transform: translate(-50%, -50%);
-    border: 3px solid rgba(255,255,255,0.8);
-    border-radius: 8px;
-    pointer-events: none;
-}
-
-.scan-caption {
-    margin-top: 12px;
-    color: white;
-    font-size: 14px;
-}
-
-#closeScanner {
-    margin-top: 15px;
-    background: #dc2626;
-    color: white;
-}
-</style>
+    footer {
+      margin-top: auto;
+      padding: 8px;
+      font-size: 0.8rem;
+      color: #666;
+      text-align: center;
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<header>
-    <h1>Dock Barcode Tool</h1>
-    <p>Scan or generate tracking barcodes.</p>
-</header>
-
-<div class="card">
-
-    <div class="row tracking-row">
-        <input type="text" id="trackingInput" placeholder="Tracking Number">
-        <button class="camera-btn" onclick="startScanner()" title="Scan barcode">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                 fill="none" stroke="#374151" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"
-                 viewBox="0 0 24 24">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-            </svg>
-        </button>
+  <div class="container">
+    <div class="input-row">
+      <input type="text" id="trackingInput" placeholder="Enter tracking number">
+      <div class="camera-btn" id="cameraBtn">📷</div>
     </div>
 
-    <div class="row">
-        <select id="doorSelect">
-            <option value="">Dock Door (Optional)</option>
-        </select>
-        <button class="btn-primary" onclick="addBarcode()">Add</button>
+    <div class="input-row">
+      <select id="doorSelect">
+        <option value="">No Door</option>
+        ${[...Array(25)].map((_, i) => `<option value="${i+1}">Door ${i+1}</option>`).join('')}
+      </select>
+      <button id="addBtn">Add</button>
     </div>
 
-    <div class="row">
-        <button class="btn-secondary" onclick="printBarcodes()">Print</button>
-        <button class="btn-danger" onclick="clearAll()">Clear All</button>
+    <div class="input-row">
+      <button id="printBtn">Print</button>
+      <button id="clearBtn">Clear All</button>
     </div>
 
-</div>
-
-<div id="barcodeViewer"></div>
-
-<div class="pagination-controls">
-    <button class="arrow-btn" id="prevBtn" onclick="prevBarcode()">←</button>
-    <div class="indicator" id="pageIndicator">0 / 0</div>
-    <button class="arrow-btn" id="nextBtn" onclick="nextBarcode()">→</button>
-</div>
-
-</div>
-
-<footer>
-    Built by Joshua Miller © <span id="year"></span>
-</footer>
-
-<div id="scannerModal">
-    <div id="scannerContainer">
-        <video id="video"></video>
-        <div class="scan-frame"></div>
+    <div class="barcode-container" id="barcodeContainer"></div>
+    <div class="pagination">
+      <button id="prevBtn" disabled>←</button>
+      <span id="pageIndicator">0/0</span>
+      <button id="nextBtn" disabled>→</button>
     </div>
-    <div class="scan-caption">Place barcode inside the outline</div>
-    <button id="closeScanner" onclick="stopScanner()">Close</button>
-</div>
+  </div>
 
-<script>
-document.getElementById("year").textContent = new Date().getFullYear();
+  <footer>© Joshua Miller</footer>
 
-const doorSelect = document.getElementById("doorSelect");
-for (let i=1;i<=25;i++){
-    let opt=document.createElement("option");
-    opt.value="Door "+i;
-    opt.textContent="Door "+i;
-    doorSelect.appendChild(opt);
-}
+  <!-- Barcode & Camera Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
 
-let currentIndex=-1;
-
-function updateViewer(){
-    const items=document.querySelectorAll(".barcode-item");
-    const prevBtn=document.getElementById("prevBtn");
-    const nextBtn=document.getElementById("nextBtn");
-
-    items.forEach((item,i)=>item.classList.toggle("active",i===currentIndex));
-
-    if(items.length===0){
-        document.getElementById("pageIndicator").textContent="0 / 0";
-        prevBtn.disabled=true;
-        nextBtn.disabled=true;
-    } else {
-        document.getElementById("pageIndicator").textContent=
-            `${currentIndex+1} / ${items.length}`;
-        prevBtn.disabled=currentIndex===0;
-        nextBtn.disabled=currentIndex===items.length-1;
+  <script>
+    // iOS dynamic height fix
+    function setAppHeight() {
+      document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
     }
-}
+    window.addEventListener('resize', setAppHeight);
+    window.addEventListener('load', setAppHeight);
 
-function addBarcode(value=null){
-    const tracking=value||trackingInput.value.trim();
-    if(!tracking) return alert("Enter tracking number");
+    // Simple barcode pagination logic
+    const barcodes = [];
+    let currentPage = 0;
 
-    const div=document.createElement("div");
-    div.className="barcode-item";
-    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-    div.appendChild(svg);
+    const container = document.getElementById('barcodeContainer');
+    const pageIndicator = document.getElementById('pageIndicator');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-    const label=document.createElement("div");
-    label.className="tracking-label";
-    label.textContent=tracking;
-    div.appendChild(label);
-
-    barcodeViewer.appendChild(div);
-
-    JsBarcode(svg,tracking,{format:"CODE128",width:2,height:85,displayValue:false});
-
-    currentIndex=document.querySelectorAll(".barcode-item").length-1;
-    updateViewer();
-    trackingInput.value="";
-}
-
-trackingInput.addEventListener("keypress",function(e){
-    if(e.key==="Enter") addBarcode();
-});
-
-function prevBarcode(){ if(currentIndex>0){currentIndex--;updateViewer();}}
-function nextBarcode(){
-    const items=document.querySelectorAll(".barcode-item");
-    if(currentIndex<items.length-1){currentIndex++;updateViewer();}
-}
-
-function clearAll(){
-    barcodeViewer.innerHTML="";
-    currentIndex=-1;
-    updateViewer();
-}
-
-function printBarcodes(){ window.print(); }
-
-/* Swipe support */
-let touchStartX=0;
-barcodeViewer.addEventListener("touchstart",e=>{
-    touchStartX=e.changedTouches[0].screenX;
-});
-barcodeViewer.addEventListener("touchend",e=>{
-    let diff=e.changedTouches[0].screenX-touchStartX;
-    if(Math.abs(diff)>50){
-        diff>0?prevBarcode():nextBarcode();
+    function renderPage() {
+      const pages = container.querySelectorAll('.barcode-page');
+      pages.forEach((p,i) => p.classList.toggle('active', i === currentPage));
+      pageIndicator.textContent = pages.length === 0 ? '0/0' : `${currentPage+1}/${pages.length}`;
+      prevBtn.disabled = currentPage === 0;
+      nextBtn.disabled = currentPage === pages.length - 1;
     }
-});
+
+    function addBarcode(tracking, door) {
+      const page = document.createElement('div');
+      page.classList.add('barcode-page');
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      JsBarcode(svg, tracking, { format: "CODE128", width:2, height:50, displayValue:false });
+      const label = document.createElement('div');
+      label.textContent = door ? `${tracking} → Door ${door}` : tracking;
+      page.appendChild(svg);
+      page.appendChild(label);
+      container.appendChild(page);
+      barcodes.push(page);
+      currentPage = barcodes.length - 1;
+      renderPage();
+    }
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+      const tracking = document.getElementById('trackingInput').value.trim();
+      const door = document.getElementById('doorSelect').value;
+      if (!tracking) return alert("Enter a tracking number");
+      addBarcode(tracking, door);
+      document.getElementById('trackingInput').value = '';
+    });
+
+    prevBtn.addEventListener('click', () => { if(currentPage>0) currentPage--; renderPage(); });
+    nextBtn.addEventListener('click', () => { if(currentPage<barcodes.length-1) currentPage++; renderPage(); });
+    document.getElementById('clearBtn').addEventListener('click', () => { container.innerHTML=''; barcodes.length=0; currentPage=0; renderPage(); });
+    document.getElementById('printBtn').addEventListener('click', () => { 
+      const printWindow = window.open('', '_blank'); 
+      printWindow.document.write(container.innerHTML); 
+      printWindow.document.close(); 
+      printWindow.print(); 
+    });
+
 
 /* Scanner */
 let codeReader;
@@ -436,14 +244,6 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.error("SW registration failed:", err));
   });
 }
-
-/* Dynamic height fix for iOS PWA */
-function setAppHeight(){
-    const doc = document.documentElement;
-    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
-}
-window.addEventListener('resize', setAppHeight);
-window.addEventListener('load', setAppHeight);
 
 updateViewer();
 </script>
