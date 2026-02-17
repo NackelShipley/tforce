@@ -54,9 +54,45 @@ header p {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-input, select {
+.input-wrapper {
+    display: flex;
+    flex: 2;
+    position: relative;
+}
+
+input {
+    padding: 10px 42px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    width: 100%;
+}
+
+.camera-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.camera-btn:hover {
+    background: #d1d5db;
+}
+
+select {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -76,7 +112,6 @@ button {
 .btn-primary { background:#2563eb; color:white; }
 .btn-secondary { background:#e5e7eb; }
 .btn-danger { background:#dc2626; color:white; }
-.btn-scan { background:#059669; color:white; }
 
 button:hover { opacity:0.9; }
 
@@ -159,12 +194,19 @@ footer {
 
 <div class="card">
     <div class="form-row">
-        <input type="text" id="trackingInput" placeholder="Tracking Number">
+
+        <div class="input-wrapper">
+            <input type="text" id="trackingInput" placeholder="Tracking Number">
+            <button class="camera-btn" onclick="startScanner()" title="Scan barcode">
+                📷
+            </button>
+        </div>
+
         <select id="doorSelect">
             <option value="">Dock Door (Optional)</option>
         </select>
+
         <button class="btn-primary" onclick="addBarcode()">Add</button>
-        <button class="btn-scan" onclick="startScanner()">Scan from BOL</button>
     </div>
 
     <div style="margin-top:10px; display:flex; gap:10px;">
@@ -242,7 +284,6 @@ function nextBarcode(){
 function clearAll(){ barcodeViewer.innerHTML="";currentIndex=-1;updateViewer();}
 function printBarcodes(){ window.print(); }
 
-/* SCANNER */
 let codeReader;
 function startScanner(){
     document.getElementById("scannerModal").style.display="flex";
@@ -254,7 +295,6 @@ function startScanner(){
         }
     });
 }
-
 function stopScanner(){
     if(codeReader) codeReader.reset();
     document.getElementById("scannerModal").style.display="none";
