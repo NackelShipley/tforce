@@ -1,7 +1,7 @@
 {
   "name": "Dock Barcode Tool",
   "short_name": "Barcode Tool",
-  "start_url": "/tforce",
+  "start_url": "/tforce/index.html",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#f4f6f8",
