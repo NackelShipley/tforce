@@ -1,36 +1,56 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="manifest.json">    
-<meta name="manifest" content="#2563eb, width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dock Barcode Tool">
+
 <title>Dock Barcode Tool</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f4f6f8">
+
 <style>
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f4f6f8;
+:root {
+    --app-height: 100vh;
+}
+
+html, body {
     margin: 0;
-    padding: 20px;
-    color: #333;
+    padding: 0;
+    height: var(--app-height);
+    width: 100%;
+}
+
+body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: var(--app-height);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f8;
+    color: #333;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .container {
-    max-width: 900px;
-    margin: auto;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
 }
 
 header {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 header h1 {
@@ -46,26 +66,36 @@ header p {
 
 .card {
     background: white;
-    padding: 18px;
+    padding: 16px;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 16px;
 }
 
-/* Rows */
 .row {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 12px;
+    width: 100%;
 }
 
-/* Tracking row */
+.tracking-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
 .tracking-row input {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ddd;
-    font-size: 15px;
+    font-size: 16px;
     transition: all 0.2s ease;
 }
 
@@ -76,8 +106,8 @@ header p {
 }
 
 .camera-btn {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     border-radius: 8px;
     border: 1px solid #ddd;
     background: white;
@@ -94,7 +124,7 @@ header p {
 }
 
 select {
-    flex: 1;
+    flex: 1 1 auto;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
@@ -116,7 +146,6 @@ button {
 
 button:hover { opacity:0.9; }
 
-/* Barcode display */
 #barcodeViewer {
     min-height: 180px;
     margin-top: 10px;
@@ -144,7 +173,6 @@ button:hover { opacity:0.9; }
     font-weight: 600;
 }
 
-/* Pagination */
 .pagination-controls {
     display: flex;
     justify-content: center;
@@ -182,7 +210,6 @@ button:hover { opacity:0.9; }
     font-size: 13px;
 }
 
-/* Footer */
 footer {
     text-align: center;
     font-size: 12px;
@@ -190,7 +217,6 @@ footer {
     margin-top: auto;
 }
 
-/* Scanner modal */
 #scannerModal {
     position: fixed;
     inset: 0;
@@ -199,6 +225,7 @@ footer {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    z-index: 1000;
 }
 
 #scannerContainer {
@@ -211,7 +238,6 @@ footer {
     border-radius: 12px;
 }
 
-/* Crosshair frame */
 .scan-frame {
     position: absolute;
     top: 50%;
@@ -239,20 +265,12 @@ footer {
 </head>
 
 <body>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"))
-      .catch(err => console.error("SW registration failed:", err));
-  });
-}
-</script>
+
 <div class="container">
 
 <header>
     <h1>Dock Barcode Tool</h1>
-    <p>Generate or scan tracking barcodes instantly.</p>
+    <p>Scan or generate tracking barcodes.</p>
 </header>
 
 <div class="card">
@@ -260,13 +278,11 @@ if ("serviceWorker" in navigator) {
     <div class="row tracking-row">
         <input type="text" id="trackingInput" placeholder="Tracking Number">
         <button class="camera-btn" onclick="startScanner()" title="Scan barcode">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                  fill="none" stroke="#374151" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round"
                  viewBox="0 0 24 24">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7
-                         a2 2 0 0 1 2-2h4l2-3h6l2 3h4
-                         a2 2 0 0 1 2 2z"/>
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                 <circle cx="12" cy="13" r="4"/>
             </svg>
         </button>
@@ -410,6 +426,23 @@ function stopScanner(){
     if(codeReader) codeReader.reset();
     document.getElementById("scannerModal").style.display="none";
 }
+
+/* Service Worker registration for PWA */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"))
+      .catch(err => console.error("SW registration failed:", err));
+  });
+}
+
+/* Dynamic height fix for iOS PWA */
+function setAppHeight(){
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+}
+window.addEventListener('resize', setAppHeight);
+window.addEventListener('load', setAppHeight);
 
 updateViewer();
 </script>
