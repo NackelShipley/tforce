@@ -8,140 +8,167 @@
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #f4f6f8;
-        margin: 0;
-        padding: 30px;
-        color: #333;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 30px;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+input, select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    flex: 1;
+}
+
+button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-primary { background: #2563eb; color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+
+.btn-secondary { background: #e5e7eb; }
+.btn-secondary:hover { background: #d1d5db; }
+
+.btn-danger { background: #dc2626; color: white; }
+.btn-danger:hover { background: #b91c1c; }
+
+#barcodeViewer {
+    position: relative;
+    min-height: 200px;
+    margin-top: 20px;
+}
+
+.barcode-item {
+    display: none;
+    padding: 25px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fafafa;
+    text-align: center;
+}
+
+.barcode-item.active {
+    display: block;
+}
+
+.tracking-label {
+    margin-top: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #111827;
+}
+
+.door-label {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.arrow-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.arrow-btn:hover {
+    background: #f9fafb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.arrow-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.arrow-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.indicator {
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+    min-width: 70px;
+    text-align: center;
+}
+
+@media print {
+    body * { visibility: hidden; }
+
+    #barcodeViewer, #barcodeViewer * {
+        visibility: visible;
     }
-
-    .container {
-        max-width: 900px;
-        margin: auto;
-    }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-weight: 600;
-    }
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
-    }
-
-    .form-row {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-    }
-
-    input, select {
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 14px;
-        flex: 1;
-    }
-
-    button {
-        padding: 10px 18px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: 0.2s ease;
-    }
-
-    .btn-primary { background: #2563eb; color: white; }
-    .btn-primary:hover { background: #1d4ed8; }
-
-    .btn-secondary { background: #e5e7eb; }
-    .btn-secondary:hover { background: #d1d5db; }
-
-    .btn-danger { background: #dc2626; color: white; }
-    .btn-danger:hover { background: #b91c1c; }
 
     #barcodeViewer {
-        position: relative;
-        min-height: 180px;
-        margin-top: 20px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
     }
 
     .barcode-item {
-        display: none;
-        padding: 20px;
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
-        background: #fafafa;
-        text-align: center;
-    }
-
-    .barcode-item.active {
-        display: block;
-    }
-
-    .tracking-label {
-        margin-top: 10px;
-        font-weight: 600;
-        font-size: 14px;
-        color: #111827;
-    }
-
-    .door-label {
-        margin-top: 6px;
-        font-size: 13px;
-        color: #374151;
+        display: block !important;
+        margin-bottom: 20px;
     }
 
     .pagination-controls {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        margin-top: 15px;
+        display: none;
     }
-
-    .arrow-btn {
-        font-size: 18px;
-        background: #e5e7eb;
-        padding: 8px 14px;
-    }
-
-    .indicator {
-        font-weight: 600;
-        min-width: 60px;
-        text-align: center;
-    }
-
-    @media print {
-        body * { visibility: hidden; }
-
-        #barcodeViewer, #barcodeViewer * {
-            visibility: visible;
-        }
-
-        #barcodeViewer {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-        }
-
-        .barcode-item {
-            display: block !important;
-            margin-bottom: 20px;
-        }
-
-        .pagination-controls {
-            display: none;
-        }
-    }
+}
 </style>
 </head>
 
@@ -168,9 +195,9 @@
     <div id="barcodeViewer"></div>
 
     <div class="pagination-controls">
-        <button class="arrow-btn" onclick="prevBarcode()">⬅</button>
+        <button class="arrow-btn" id="prevBtn" onclick="prevBarcode()">←</button>
         <div class="indicator" id="pageIndicator">0 / 0</div>
-        <button class="arrow-btn" onclick="nextBarcode()">➡</button>
+        <button class="arrow-btn" id="nextBtn" onclick="nextBarcode()">→</button>
     </div>
 </div>
 
@@ -187,12 +214,24 @@ let currentIndex = -1;
 
 function updateViewer() {
     const items = document.querySelectorAll(".barcode-item");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
     items.forEach((item, index) => {
         item.classList.toggle("active", index === currentIndex);
     });
 
-    document.getElementById("pageIndicator").textContent =
-        items.length === 0 ? "0 / 0" : `${currentIndex + 1} / ${items.length}`;
+    if (items.length === 0) {
+        document.getElementById("pageIndicator").textContent = "0 / 0";
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+    } else {
+        document.getElementById("pageIndicator").textContent =
+            `${currentIndex + 1} / ${items.length}`;
+
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === items.length - 1;
+    }
 }
 
 function addBarcode() {
@@ -229,7 +268,7 @@ function addBarcode() {
     JsBarcode(svg, tracking, {
         format: "CODE128",
         width: 2,
-        height: 80,
+        height: 90,
         displayValue: false
     });
 
@@ -242,15 +281,15 @@ function addBarcode() {
 
 function prevBarcode() {
     const items = document.querySelectorAll(".barcode-item");
-    if (items.length === 0) return;
-    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    if (items.length === 0 || currentIndex <= 0) return;
+    currentIndex--;
     updateViewer();
 }
 
 function nextBarcode() {
     const items = document.querySelectorAll(".barcode-item");
-    if (items.length === 0) return;
-    currentIndex = (currentIndex + 1) % items.length;
+    if (items.length === 0 || currentIndex >= items.length - 1) return;
+    currentIndex++;
     updateViewer();
 }
 
@@ -266,19 +305,19 @@ function printBarcodes() {
     window.print();
 }
 
-// Swipe Support
+// Swipe support
 let touchStartX = 0;
-
 document.getElementById("barcodeViewer").addEventListener("touchstart", e => {
     touchStartX = e.changedTouches[0].screenX;
 });
-
 document.getElementById("barcodeViewer").addEventListener("touchend", e => {
     let diff = e.changedTouches[0].screenX - touchStartX;
     if (Math.abs(diff) > 50) {
         diff > 0 ? prevBarcode() : nextBarcode();
     }
 });
+
+updateViewer();
 </script>
 
 </body>
