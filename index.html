@@ -50,24 +50,22 @@ header p {
     margin-bottom: 20px;
 }
 
-.form-row {
+.row {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
+    margin-bottom: 10px;
 }
 
 .input-wrapper {
-    display: flex;
-    flex: 2;
     position: relative;
+    width: 100%;
 }
 
 input {
-    padding: 10px 42px 10px 12px;
+    padding: 12px 44px 12px 12px;
     border-radius: 8px;
     border: 1px solid #ddd;
-    font-size: 14px;
+    font-size: 15px;
     width: 100%;
 }
 
@@ -76,9 +74,9 @@ input {
     right: 6px;
     top: 50%;
     transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     border: none;
     background: #e5e7eb;
     display: flex;
@@ -86,6 +84,7 @@ input {
     justify-content: center;
     cursor: pointer;
     transition: 0.2s;
+    font-size: 16px;
 }
 
 .camera-btn:hover {
@@ -193,26 +192,29 @@ footer {
 </header>
 
 <div class="card">
-    <div class="form-row">
 
+    <!-- Row 1: Full width input -->
+    <div class="row">
         <div class="input-wrapper">
             <input type="text" id="trackingInput" placeholder="Tracking Number">
-            <button class="camera-btn" onclick="startScanner()" title="Scan barcode">
-                📷
-            </button>
+            <button class="camera-btn" onclick="startScanner()" title="Scan barcode">📷</button>
         </div>
+    </div>
 
+    <!-- Row 2: Door + Add -->
+    <div class="row">
         <select id="doorSelect">
             <option value="">Dock Door (Optional)</option>
         </select>
-
         <button class="btn-primary" onclick="addBarcode()">Add</button>
     </div>
 
-    <div style="margin-top:10px; display:flex; gap:10px;">
+    <!-- Row 3: Print + Clear -->
+    <div class="row">
         <button class="btn-secondary" onclick="printBarcodes()">Print</button>
         <button class="btn-danger" onclick="clearAll()">Clear All</button>
     </div>
+
 </div>
 
 <div id="barcodeViewer"></div>
