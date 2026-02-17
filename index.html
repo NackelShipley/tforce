@@ -50,14 +50,6 @@
         flex: 1;
     }
 
-    .checkbox-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 10px;
-        font-size: 14px;
-    }
-
     button {
         padding: 10px 18px;
         border: none;
@@ -99,16 +91,24 @@
     }
 
     .barcode-item {
-        padding: 15px;
+        padding: 20px;
         border: 1px solid #e5e7eb;
         border-radius: 10px;
         background: #fafafa;
         text-align: center;
     }
 
-    .door-label {
-        margin-top: 8px;
+    .tracking-label {
+        margin-top: 10px;
         font-weight: 600;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .door-label {
+        margin-top: 6px;
+        font-weight: 500;
+        font-size: 13px;
         color: #374151;
     }
 
@@ -141,15 +141,10 @@
             <input type="text" id="trackingInput" placeholder="Enter Tracking Number">
 
             <select id="doorSelect">
-                <option value="">Select Dock Door</option>
+                <option value="">Select Dock Door (Optional)</option>
             </select>
 
             <button class="btn-primary" onclick="addBarcode()">Add</button>
-        </div>
-
-        <div class="checkbox-row">
-            <input type="checkbox" id="noDoorCheckbox" onchange="toggleDoorRequirement()">
-            <label for="noDoorCheckbox">No Door Assignment Required</label>
         </div>
 
         <div style="margin-top:15px; display:flex; gap:10px;">
@@ -171,23 +166,12 @@ for (let i = 1; i <= 25; i++) {
     doorSelect.appendChild(option);
 }
 
-function toggleDoorRequirement() {
-    const checkbox = document.getElementById("noDoorCheckbox");
-    doorSelect.disabled = checkbox.checked;
-}
-
 function addBarcode() {
     const tracking = document.getElementById("trackingInput").value.trim();
     const door = document.getElementById("doorSelect").value;
-    const noDoor = document.getElementById("noDoorCheckbox").checked;
 
     if (!tracking) {
         alert("Please enter a tracking number.");
-        return;
-    }
-
-    if (!noDoor && !door) {
-        alert("Please select a dock door or check 'No Door Assignment Required'.");
         return;
     }
 
@@ -199,7 +183,12 @@ function addBarcode() {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     barcodeDiv.appendChild(svg);
 
-    if (!noDoor) {
+    const trackingLabel = document.createElement("div");
+    trackingLabel.className = "tracking-label";
+    trackingLabel.textContent = tracking;
+    barcodeDiv.appendChild(trackingLabel);
+
+    if (door) {
         const doorLabel = document.createElement("div");
         doorLabel.className = "door-label";
         doorLabel.textContent = door;
@@ -212,7 +201,7 @@ function addBarcode() {
         format: "CODE128",
         width: 2,
         height: 80,
-        displayValue: true
+        displayValue: false
     });
 
     document.getElementById("trackingInput").value = "";
@@ -222,8 +211,6 @@ function addBarcode() {
 function clearAll() {
     document.getElementById("trackingInput").value = "";
     doorSelect.value = "";
-    document.getElementById("noDoorCheckbox").checked = false;
-    doorSelect.disabled = false;
     document.getElementById("barcodeContainer").innerHTML = "";
 }
 
