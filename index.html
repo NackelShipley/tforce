@@ -6,6 +6,7 @@
 <title>Dock Barcode Tool</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@latest"></script>
 
 <style>
 body {
@@ -16,7 +17,7 @@ body {
     color: #333;
     display: flex;
     flex-direction: column;
-    min-height: 80vh;
+    min-height: 100vh;
 }
 
 .container {
@@ -27,19 +28,18 @@ body {
 
 header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 header h1 {
     font-size: 20px;
-    font-weight: 600;
     margin: 0;
 }
 
 header p {
     font-size: 13px;
     color: #6b7280;
-    margin: 4px 0 0 0;
+    margin: 4px 0 0;
 }
 
 .card {
@@ -52,12 +52,12 @@ header p {
 
 .form-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 input, select {
-    padding: 10px 12px;
+    padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
     font-size: 14px;
@@ -65,131 +65,85 @@ input, select {
 }
 
 button {
-    padding: 10px 16px;
-    border: none;
+    padding: 10px 14px;
     border-radius: 8px;
-    font-weight: 500;
+    border: none;
     cursor: pointer;
-    transition: 0.2s ease;
+    font-weight: 500;
+    transition: 0.2s;
 }
 
-.btn-primary { background: #2563eb; color: white; }
-.btn-primary:hover { background: #1d4ed8; }
+.btn-primary { background:#2563eb; color:white; }
+.btn-secondary { background:#e5e7eb; }
+.btn-danger { background:#dc2626; color:white; }
+.btn-scan { background:#059669; color:white; }
 
-.btn-secondary { background: #e5e7eb; }
-.btn-secondary:hover { background: #d1d5db; }
+button:hover { opacity:0.9; }
 
-.btn-danger { background: #dc2626; color: white; }
-.btn-danger:hover { background: #b91c1c; }
-
-#barcodeViewer {
-    min-height: 180px;
-    margin-top: 10px;
-}
+#barcodeViewer { min-height:180px; }
 
 .barcode-item {
-    display: none;
-    padding: 20px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background: #fafafa;
-    text-align: center;
+    display:none;
+    padding:20px;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:#fafafa;
+    text-align:center;
 }
 
-.barcode-item.active {
-    display: block;
-}
+.barcode-item.active { display:block; }
 
 .tracking-label {
-    margin-top: 10px;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.door-label {
-    margin-top: 5px;
-    font-size: 13px;
-    color: #374151;
+    margin-top:10px;
+    font-weight:600;
 }
 
 .pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin-top: 15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    margin-top:15px;
 }
 
 .arrow-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:white;
+    border:1px solid #e5e7eb;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-.arrow-btn:hover {
-    background: #f9fafb;
-    transform: translateY(-2px);
-}
-
-.arrow-btn:active {
-    transform: scale(0.95);
-}
-
-.arrow-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.indicator {
-    font-weight: 600;
-    font-size: 13px;
-    color: #374151;
-    min-width: 60px;
-    text-align: center;
-}
+.indicator { font-weight:600; }
 
 footer {
-    text-align: center;
-    font-size: 12px;
-    color: #9ca3af;
-    padding-top: 10px;
-    margin-top: 20px;
+    text-align:center;
+    font-size:12px;
+    color:#9ca3af;
+    margin-top:auto;
 }
 
-@media print {
-    body * { visibility: hidden; }
+#scannerModal {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
 
-    #barcodeViewer, #barcodeViewer * {
-        visibility: visible;
-    }
+#scannerModal video {
+    width:90%;
+    max-width:400px;
+    border-radius:12px;
+}
 
-    #barcodeViewer {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-
-    .barcode-item {
-        display: block !important;
-        margin-bottom: 20px;
-    }
-
-    .pagination-controls,
-    footer,
-    header,
-    .card {
-        display: none;
-    }
+#closeScanner {
+    margin-top:15px;
+    background:#dc2626;
+    color:white;
 }
 </style>
 </head>
@@ -200,7 +154,7 @@ footer {
 
 <header>
     <h1>Dock Barcode Tool</h1>
-    <p>Generate and scan tracking barcodes efficiently.</p>
+    <p>Generate or scan tracking barcodes instantly.</p>
 </header>
 
 <div class="card">
@@ -210,9 +164,10 @@ footer {
             <option value="">Dock Door (Optional)</option>
         </select>
         <button class="btn-primary" onclick="addBarcode()">Add</button>
+        <button class="btn-scan" onclick="startScanner()">Scan from BOL</button>
     </div>
 
-    <div style="margin-top:12px; display:flex; gap:10px;">
+    <div style="margin-top:10px; display:flex; gap:10px;">
         <button class="btn-secondary" onclick="printBarcodes()">Print</button>
         <button class="btn-danger" onclick="clearAll()">Clear All</button>
     </div>
@@ -221,134 +176,89 @@ footer {
 <div id="barcodeViewer"></div>
 
 <div class="pagination-controls">
-    <button class="arrow-btn" id="prevBtn" onclick="prevBarcode()">←</button>
+    <button class="arrow-btn" onclick="prevBarcode()">←</button>
     <div class="indicator" id="pageIndicator">0 / 0</div>
-    <button class="arrow-btn" id="nextBtn" onclick="nextBarcode()">→</button>
+    <button class="arrow-btn" onclick="nextBarcode()">→</button>
 </div>
 
 </div>
 
 <footer>
-    Built by Joshua Miller
+    Built by Joshua Miller © <span id="year"></span>
 </footer>
 
+<div id="scannerModal">
+    <video id="video"></video>
+    <button id="closeScanner" onclick="stopScanner()">Close</button>
+</div>
+
 <script>
-const doorSelect = document.getElementById("doorSelect");
-for (let i = 1; i <= 25; i++) {
-    const option = document.createElement("option");
-    option.value = "Door " + i;
-    option.textContent = "Door " + i;
-    doorSelect.appendChild(option);
+document.getElementById("year").textContent = new Date().getFullYear();
+
+for (let i=1;i<=25;i++){
+    let opt=document.createElement("option");
+    opt.value="Door "+i;
+    opt.textContent="Door "+i;
+    doorSelect.appendChild(opt);
 }
 
-let currentIndex = -1;
+let currentIndex=-1;
 
-function updateViewer() {
-    const items = document.querySelectorAll(".barcode-item");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-
-    items.forEach((item, index) => {
-        item.classList.toggle("active", index === currentIndex);
-    });
-
-    if (items.length === 0) {
-        document.getElementById("pageIndicator").textContent = "0 / 0";
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-    } else {
-        document.getElementById("pageIndicator").textContent =
-            `${currentIndex + 1} / ${items.length}`;
-
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === items.length - 1;
-    }
+function updateViewer(){
+    const items=document.querySelectorAll(".barcode-item");
+    items.forEach((item,i)=>item.classList.toggle("active",i===currentIndex));
+    document.getElementById("pageIndicator").textContent=
+        items.length?`${currentIndex+1} / ${items.length}`:"0 / 0";
 }
 
-function addBarcode() {
-    const tracking = document.getElementById("trackingInput").value.trim();
-    const door = document.getElementById("doorSelect").value;
+function addBarcode(value=null){
+    const tracking=value||trackingInput.value.trim();
+    if(!tracking) return alert("Enter tracking number");
 
-    if (!tracking) {
-        alert("Please enter a tracking number.");
-        return;
-    }
+    const div=document.createElement("div");
+    div.className="barcode-item";
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    div.appendChild(svg);
 
-    const viewer = document.getElementById("barcodeViewer");
+    const label=document.createElement("div");
+    label.className="tracking-label";
+    label.textContent=tracking;
+    div.appendChild(label);
 
-    const barcodeDiv = document.createElement("div");
-    barcodeDiv.className = "barcode-item";
+    barcodeViewer.appendChild(div);
 
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    barcodeDiv.appendChild(svg);
+    JsBarcode(svg,tracking,{format:"CODE128",width:2,height:85,displayValue:false});
 
-    const trackingLabel = document.createElement("div");
-    trackingLabel.className = "tracking-label";
-    trackingLabel.textContent = tracking;
-    barcodeDiv.appendChild(trackingLabel);
-
-    if (door) {
-        const doorLabel = document.createElement("div");
-        doorLabel.className = "door-label";
-        doorLabel.textContent = door;
-        barcodeDiv.appendChild(doorLabel);
-    }
-
-    viewer.appendChild(barcodeDiv);
-
-    JsBarcode(svg, tracking, {
-        format: "CODE128",
-        width: 2,
-        height: 85,
-        displayValue: false
-    });
-
-    currentIndex = document.querySelectorAll(".barcode-item").length - 1;
+    currentIndex=document.querySelectorAll(".barcode-item").length-1;
     updateViewer();
-
-    document.getElementById("trackingInput").value = "";
-    doorSelect.value = "";
+    trackingInput.value="";
 }
 
-function prevBarcode() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        updateViewer();
-    }
+function prevBarcode(){ if(currentIndex>0){currentIndex--;updateViewer();}}
+function nextBarcode(){
+    const items=document.querySelectorAll(".barcode-item");
+    if(currentIndex<items.length-1){currentIndex++;updateViewer();}
+}
+function clearAll(){ barcodeViewer.innerHTML="";currentIndex=-1;updateViewer();}
+function printBarcodes(){ window.print(); }
+
+/* SCANNER */
+let codeReader;
+function startScanner(){
+    document.getElementById("scannerModal").style.display="flex";
+    codeReader=new ZXing.BrowserBarcodeReader();
+    codeReader.decodeFromVideoDevice(null,'video',(result,err)=>{
+        if(result){
+            addBarcode(result.text);
+            stopScanner();
+        }
+    });
 }
 
-function nextBarcode() {
-    const items = document.querySelectorAll(".barcode-item");
-    if (currentIndex < items.length - 1) {
-        currentIndex++;
-        updateViewer();
-    }
+function stopScanner(){
+    if(codeReader) codeReader.reset();
+    document.getElementById("scannerModal").style.display="none";
 }
-
-function clearAll() {
-    document.getElementById("barcodeViewer").innerHTML = "";
-    document.getElementById("trackingInput").value = "";
-    doorSelect.value = "";
-    currentIndex = -1;
-    updateViewer();
-}
-
-function printBarcodes() {
-    window.print();
-}
-
-let touchStartX = 0;
-document.getElementById("barcodeViewer").addEventListener("touchstart", e => {
-    touchStartX = e.changedTouches[0].screenX;
-});
-document.getElementById("barcodeViewer").addEventListener("touchend", e => {
-    let diff = e.changedTouches[0].screenX - touchStartX;
-    if (Math.abs(diff) > 50) {
-        diff > 0 ? prevBarcode() : nextBarcode();
-    }
-});
-
-updateViewer();
 </script>
 
 </body>
