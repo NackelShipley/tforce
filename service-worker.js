@@ -1,6 +1,6 @@
 const CACHE_NAME = 'dock-barcode-cache-v1';
 const urlsToCache = [
-  '/',
+  '/tforce',
   '/index.html',
   '/manifest.json',
   '/service-worker.js',
