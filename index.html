@@ -16,20 +16,26 @@
 <meta name="theme-color" content="#f4f6f8">
 
 <style>
+:root {
+    --app-height: 100vh;
+}
+
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: var(--app-height);
     width: 100%;
 }
 
 body {
     display: flex;
     flex-direction: column;
-    min-height: -webkit-fill-available;
+    min-height: var(--app-height);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #f4f6f8;
     color: #333;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .container {
@@ -37,9 +43,9 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 16px;
+    width: 100%;
     box-sizing: border-box;
-    max-width: 100%;
+    padding: 16px;
 }
 
 header {
@@ -69,7 +75,6 @@ header p {
     margin-bottom: 16px;
 }
 
-/* Rows */
 .row {
     display: flex;
     flex-wrap: wrap;
@@ -141,7 +146,6 @@ button {
 
 button:hover { opacity:0.9; }
 
-/* Barcode display */
 #barcodeViewer {
     min-height: 180px;
     margin-top: 10px;
@@ -169,7 +173,6 @@ button:hover { opacity:0.9; }
     font-weight: 600;
 }
 
-/* Pagination */
 .pagination-controls {
     display: flex;
     justify-content: center;
@@ -207,7 +210,6 @@ button:hover { opacity:0.9; }
     font-size: 13px;
 }
 
-/* Footer */
 footer {
     text-align: center;
     font-size: 12px;
@@ -215,7 +217,6 @@ footer {
     margin-top: auto;
 }
 
-/* Scanner modal */
 #scannerModal {
     position: fixed;
     inset: 0;
@@ -426,8 +427,6 @@ function stopScanner(){
     document.getElementById("scannerModal").style.display="none";
 }
 
-updateViewer();
-
 /* Service Worker registration for PWA */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -436,6 +435,16 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.error("SW registration failed:", err));
   });
 }
+
+/* Dynamic height fix for iOS PWA */
+function setAppHeight(){
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+}
+window.addEventListener('resize', setAppHeight);
+window.addEventListener('load', setAppHeight);
+
+updateViewer();
 </script>
 
 </body>
