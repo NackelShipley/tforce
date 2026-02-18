@@ -3,377 +3,149 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dock Barcode Tool">
-
 <title>Dock Barcode Tool</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#f4f6f8">
-
 <style>
-:root {
-    --app-height: 100vh;
-}
+:root { --app-height: 100vh; }
 
 html, body {
-    margin: 0;
-    padding: 0;
-    height: var(--app-height);
-    width: 100%;
+    margin:0;
+    padding:0;
+    height:var(--app-height);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:#f4f6f8;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: var(--app-height);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f4f6f8;
-    color: #333;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-.container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 16px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 12px;
-}
-
-header h1 {
-    font-size: 20px;
-    margin: 0;
-}
-
-header p {
-    font-size: 13px;
-    color: #6b7280;
-    margin: 4px 0 0;
-}
+.container { padding:16px; }
 
 .card {
-    background: white;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 16px;
+    background:white;
+    padding:16px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:16px;
 }
 
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-    width: 100%;
-}
+.row { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
 
-.tracking-row {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-
-.tracking-row input {
-    flex: 1 1 auto;
-    min-width: 0;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: all 0.2s ease;
-}
-
-.tracking-row input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-}
-
-.camera-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.camera-btn:hover {
-    background: #f3f4f6;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-select {
-    flex: 1 1 auto;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 14px;
+input, select {
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ddd;
 }
 
 button {
-    padding: 10px 16px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s;
+    padding:10px 16px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:500;
 }
 
 .btn-primary { background:#2563eb; color:white; }
 .btn-secondary { background:#e5e7eb; }
 .btn-danger { background:#dc2626; color:white; }
 
-button:hover { opacity:0.9; }
-
-#barcodeViewer {
-    min-height: 180px;
-    margin-top: 10px;
-}
+#barcodeViewer { margin-top:10px; }
 
 .barcode-item {
-    display: none;
-    padding: 20px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    background: #fafafa;
-    text-align: center;
-    animation: fadeIn 0.25s ease;
+    display:none;
+    padding:20px;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:#fafafa;
+    text-align:center;
+    position:relative;
+    margin-bottom:12px;
 }
 
-.barcode-item.active { display: block; }
+.barcode-item.active { display:block; }
+.expanded .barcode-item { display:block; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.tracking-label {
-    margin-top: 10px;
-    font-weight: 600;
-}
+.tracking-label { margin-top:8px; font-weight:600; }
+.door-label { font-size:13px; color:#6b7280; margin-top:4px; }
 
 .pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    margin-top: 15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:24px;
+    margin-top:15px;
 }
 
 .arrow-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:white;
+    border:1px solid #e5e7eb;
 }
 
-.arrow-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
+.delete-btn {
+    position:absolute;
+    top:8px;
+    right:8px;
+    background:white;
+    border:none;
+    cursor:pointer;
 }
 
-.arrow-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    box-shadow: none;
+.delete-btn svg {
+    width:18px;
+    height:18px;
+    stroke:#dc2626;
 }
 
-.indicator {
-    font-weight: 600;
-    font-size: 13px;
-}
-
-footer {
-    text-align: center;
-    font-size: 12px;
-    color: #9ca3af;
-    margin-top: auto;
-}
-
-#scannerModal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 1000;
-}
-
-#scannerContainer {
-    position: relative;
-}
-
-#scannerModal video {
-    width: 90vw;
-    max-width: 420px;
-    border-radius: 12px;
-}
-
-.scan-frame {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 70%;
-    height: 40%;
-    transform: translate(-50%, -50%);
-    border: 3px solid rgba(255,255,255,0.8);
-    border-radius: 8px;
-    pointer-events: none;
-}
-
-.scan-caption {
-    margin-top: 12px;
-    color: white;
-    font-size: 14px;
-}
-
-#closeScanner {
-    margin-top: 15px;
-    background: #dc2626;
-    color: white;
+@media print {
+    body * { visibility:hidden; }
+    #barcodeViewer, #barcodeViewer * { visibility:visible; }
+    #barcodeViewer { position:absolute; left:0; top:0; width:100%; }
 }
 </style>
 </head>
 
 <body>
-
-    <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker Registered'))
-      .catch(err => console.error('SW registration failed:', err));
-  });
-}
-    </script>
-    
 <div class="container">
 
-<header>
-    <h1>Dock Barcode Tool</h1>
-    <p>Scan or generate tracking barcodes.</p>
-</header>
+<h2>Dock Barcode Tool</h2>
 
 <div class="card">
 
-    <div class="row tracking-row">
-        <input type="text" id="trackingInput" placeholder="Tracking Number">
-        <button class="camera-btn" onclick="startScanner()" title="Scan barcode">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                 fill="none" stroke="#374151" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round"
-                 viewBox="0 0 24 24">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-            </svg>
-        </button>
-    </div>
+<div class="row">
+<input type="text" id="trackingInput" placeholder="Tracking Number(s) — use , or ; for multiple">
+</div>
 
-    <div class="row">
-        <select id="doorSelect">
-            <option value="">Dock Door (Optional)</option>
-        </select>
-        <button class="btn-primary" onclick="addBarcode()">Add</button>
-    </div>
+<div class="row">
+<select id="doorSelect">
+<option value="">Dock Door (Optional)</option>
+</select>
+<button class="btn-primary" onclick="addBarcode()">Add</button>
+</div>
 
-    <div class="row">
-        <button class="btn-secondary" onclick="printBarcodes()">Print</button>
-        <button class="btn-danger" onclick="clearAll()">Clear All</button>
-        <button id="viewToggle" class="btn-expand">Excpanded View</button>
-
-        <script>
-            let viewMode = "paged";
-
-            function renderPage() {
-                const pages = container.querySelectorAll('.barcode-item');
-
-                if (viewMode === "expanded") {
-                    pages.forEach(p => p.classList.add('active'));
-                    prevBtn.style.display = "none";
-                    nextBtn.style.display = "none";
-                    pageIndicator.style.display = "none";
-                } else {
-                    pages.forEach((p, i) =>
-                        p.classList.toggle('active', i === currentPage)
-                                  );
-                    prevBtn.style.display = "";
-                    nextBtn.style.display = "";
-                    pageIndicator.style.display = "";
-                }
-
-                pageIndicator.textContent = 
-                    pages.length === 0 ? '0/0' : '${currentPage + 1}/${pages.length}';
-
-                prevBtn.disabled = currentPage === 0;
-                nexBtn.disabled = currentPage === pages.length - 1;
-            }
-
-            document.getElementById("viewToggle").addEventListener("click", () => {
-                viewMode = viewMode === "paged" ? "expanded" : "paged";
-                document.getElementById("viewToggle").textContent = 
-                    viewMode === "paged" ? "Expanded View" : "Collapsed View";
-                renderPage();
-            });
-        </script>
-    </div>
+<div class="row">
+<button class="btn-secondary" onclick="toggleView()">Toggle View</button>
+<button class="btn-secondary" onclick="shareBarcodes()">Share</button>
+<button class="btn-secondary" onclick="printBarcodes()">Print</button>
+<button class="btn-danger" onclick="clearAll()">Clear All</button>
+</div>
 
 </div>
 
 <div id="barcodeViewer"></div>
 
-<div class="pagination-controls">
-    <button class="arrow-btn" id="prevBtn" onclick="prevBarcode()">←</button>
-    <div class="indicator" id="pageIndicator">0 / 0</div>
-    <button class="arrow-btn" id="nextBtn" onclick="nextBarcode()">→</button>
+<div class="pagination-controls" id="paginationControls">
+<button class="arrow-btn" onclick="prevBarcode()">←</button>
+<div id="pageIndicator">0 / 0</div>
+<button class="arrow-btn" onclick="nextBarcode()">→</button>
 </div>
 
-</div>
-
-<footer>
-    Built by Joshua Miller © <span id="year"></span>
-</footer>
-
-<div id="scannerModal">
-    <div id="scannerContainer">
-        <video id="video"></video>
-        <div class="scan-frame"></div>
-    </div>
-    <div class="scan-caption">Place barcode inside the outline</div>
-    <button id="closeScanner" onclick="stopScanner()">Close</button>
 </div>
 
 <script>
-document.getElementById("year").textContent = new Date().getFullYear();
-
 const doorSelect = document.getElementById("doorSelect");
 for (let i=1;i<=25;i++){
     let opt=document.createElement("option");
@@ -383,115 +155,135 @@ for (let i=1;i<=25;i++){
 }
 
 let currentIndex=-1;
+let expandedView=false;
 
 function updateViewer(){
     const items=document.querySelectorAll(".barcode-item");
-    const prevBtn=document.getElementById("prevBtn");
-    const nextBtn=document.getElementById("nextBtn");
+    const pagination=document.getElementById("paginationControls");
+
+    if(expandedView){
+        document.getElementById("barcodeViewer").classList.add("expanded");
+        pagination.style.display="none";
+        document.getElementById("pageIndicator").textContent="";
+        return;
+    } else {
+        document.getElementById("barcodeViewer").classList.remove("expanded");
+        pagination.style.display="flex";
+    }
 
     items.forEach((item,i)=>item.classList.toggle("active",i===currentIndex));
 
     if(items.length===0){
         document.getElementById("pageIndicator").textContent="0 / 0";
-        prevBtn.disabled=true;
-        nextBtn.disabled=true;
     } else {
         document.getElementById("pageIndicator").textContent=
-            `${currentIndex+1} / ${items.length}`;
-        prevBtn.disabled=currentIndex===0;
-        nextBtn.disabled=currentIndex===items.length-1;
+        `${currentIndex+1} / ${items.length}`;
     }
 }
 
-function addBarcode(value=null){
-    const tracking=value||trackingInput.value.trim();
-    if(!tracking) return alert("Enter tracking number");
-
-    const div=document.createElement("div");
-    div.className="barcode-item";
-    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-    div.appendChild(svg);
-
-    const label=document.createElement("div");
-    label.className="tracking-label";
-    label.textContent=tracking;
-    div.appendChild(label);
-
-    barcodeViewer.appendChild(div);
-
-    JsBarcode(svg,tracking,{format:"CODE128",width:2,height:85,displayValue:false});
-
-    currentIndex=document.querySelectorAll(".barcode-item").length-1;
+function toggleView(){
+    expandedView=!expandedView;
     updateViewer();
-    trackingInput.value="";
 }
 
-trackingInput.addEventListener("keypress",function(e){
-    if(e.key==="Enter") addBarcode();
-});
+function addBarcode(){
+    const raw=document.getElementById("trackingInput").value.trim();
+    if(!raw) return alert("Enter tracking number");
 
-function prevBarcode(){ if(currentIndex>0){currentIndex--;updateViewer();}}
+    const entries=raw.split(/[,;]+/).map(e=>e.trim()).filter(Boolean);
+    const door=doorSelect.value;
+
+    entries.forEach(tracking=>{
+        const div=document.createElement("div");
+        div.className="barcode-item";
+
+        const deleteBtn=document.createElement("button");
+        deleteBtn.className="delete-btn";
+        deleteBtn.innerHTML=`
+        <svg fill="none" stroke="currentColor" stroke-width="2"
+        viewBox="0 0 24 24">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        </svg>`;
+        deleteBtn.onclick=()=>deleteBarcode(div);
+        div.appendChild(deleteBtn);
+
+        const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+        div.appendChild(svg);
+
+        const label=document.createElement("div");
+        label.className="tracking-label";
+        label.textContent=tracking;
+        div.appendChild(label);
+
+        if(door){
+            const doorDiv=document.createElement("div");
+            doorDiv.className="door-label";
+            doorDiv.textContent=door;
+            div.appendChild(doorDiv);
+        }
+
+        document.getElementById("barcodeViewer").appendChild(div);
+
+        JsBarcode(svg,tracking,{format:"CODE128",width:2,height:85,displayValue:false});
+    });
+
+    currentIndex=document.querySelectorAll(".barcode-item").length-1;
+    document.getElementById("trackingInput").value="";
+    updateViewer();
+}
+
+function deleteBarcode(element){
+    if(confirm("Delete this barcode?")){
+        element.remove();
+        const items=document.querySelectorAll(".barcode-item");
+        if(currentIndex>=items.length) currentIndex=items.length-1;
+        updateViewer();
+    }
+}
+
+function prevBarcode(){
+    if(currentIndex>0){currentIndex--;updateViewer();}
+}
+
 function nextBarcode(){
     const items=document.querySelectorAll(".barcode-item");
     if(currentIndex<items.length-1){currentIndex++;updateViewer();}
 }
 
 function clearAll(){
-    barcodeViewer.innerHTML="";
-    currentIndex=-1;
-    updateViewer();
-}
-
-function printBarcodes(){ window.print(); }
-
-/* Swipe support */
-let touchStartX=0;
-barcodeViewer.addEventListener("touchstart",e=>{
-    touchStartX=e.changedTouches[0].screenX;
-});
-barcodeViewer.addEventListener("touchend",e=>{
-    let diff=e.changedTouches[0].screenX-touchStartX;
-    if(Math.abs(diff)>50){
-        diff>0?prevBarcode():nextBarcode();
+    if(confirm("Clear all barcodes?")){
+        document.getElementById("barcodeViewer").innerHTML="";
+        currentIndex=-1;
+        updateViewer();
     }
-});
-
-/* Scanner */
-let codeReader;
-function startScanner(){
-    document.getElementById("scannerModal").style.display="flex";
-    codeReader=new ZXing.BrowserBarcodeReader();
-    codeReader.decodeFromVideoDevice(null,'video',(result)=>{
-        if(result){
-            addBarcode(result.text);
-            stopScanner();
-        }
-    });
-}
-function stopScanner(){
-    if(codeReader) codeReader.reset();
-    document.getElementById("scannerModal").style.display="none";
 }
 
-/* Service Worker registration for PWA */
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"))
-      .catch(err => console.error("SW registration failed:", err));
-  });
+function printBarcodes(){
+    expandedView=true;
+    updateViewer();
+    window.print();
 }
 
-/* Dynamic height fix for iOS PWA */
-function setAppHeight(){
-    const doc = document.documentElement;
-    doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+function shareBarcodes(){
+    const items=[...document.querySelectorAll(".tracking-label")]
+    .map(el=>el.textContent).join("\n");
+
+    if(!items) return alert("No barcodes to share.");
+
+    if(navigator.share){
+        navigator.share({
+            title:"Dock Barcodes",
+            text:items
+        });
+    } else {
+        navigator.clipboard.writeText(items);
+        alert("Copied to clipboard.");
+    }
 }
-window.addEventListener('resize', setAppHeight);
-window.addEventListener('load', setAppHeight);
 
 updateViewer();
 </script>
-
 </body>
 </html>
