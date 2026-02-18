@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dock-barcode-cache-v2';
+const CACHE_NAME = 'dock-barcode-cache-v1';
 const urlsToCache = [
   './',
   './index.html',
