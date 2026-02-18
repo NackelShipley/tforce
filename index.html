@@ -361,10 +361,60 @@ function clearAll(){ if(confirm("Clear all barcodes?")){ barcodeViewer.innerHTML
 function printBarcodes(){ expandedView=true; updateViewer(); window.print(); }
 
 /* SHARE */
-function shareBarcodes(){
-const items=[...document.querySelectorAll(".tracking-label")].map(el=>el.textContent).join("\n");
-if(!items) return;
-navigator.share?.({title:"Dock Barcodes",text:items}) || navigator.clipboard.writeText(items);
+async function shareBarcodes() {
+    const { jsPDF } = window.jspdf;
+
+    // Expand view for PDF generation
+    const items = document.querySelectorAll(".barcode-item");
+    if (!items.length) return alert("No barcodes to share!");
+
+    const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
+    let y = 40; // initial vertical offset
+
+    for (let i = 0; i < items.length; i++) {
+        const svg = items[i].querySelector("svg");
+        const door = items[i].querySelector(".door-section span").textContent;
+        const tracking = items[i].querySelector(".tracking-label").textContent;
+
+        // Convert SVG to PNG DataURL
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        await new Promise((resolve) => {
+            img.onload = resolve;
+            img.src = url;
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth() - 80;
+        const aspect = img.width / img.height;
+        const pdfHeight = pdfWidth / aspect;
+
+        if (y + pdfHeight + 50 > pdf.internal.pageSize.getHeight()) {
+            pdf.addPage();
+            y = 40;
+        }
+
+        pdf.addImage(img, "PNG", 40, y, pdfWidth, pdfHeight);
+        y += pdfHeight + 8;
+
+        // Add tracking number and door info below barcode
+        pdf.setFontSize(12);
+        pdf.text(`Tracking: ${tracking} | ${door}`, 40, y);
+        y += 30;
+
+        URL.revokeObjectURL(url);
+    }
+
+    // Use native share if available
+    if (navigator.canShare && navigator.canShare({ files: [new File([pdf.output('blob')], "DockBarcodes.pdf", { type: "application/pdf" })] })) {
+        const file = new File([pdf.output('blob')], "DockBarcodes.pdf", { type: "application/pdf" });
+        navigator.share({ files: [file], title: "Dock Barcodes" });
+    } else {
+        // fallback: open PDF in new tab
+        pdf.output("dataurlnewwindow");
+    }
 }
 
 /* ENTER KEY SUPPORT */
