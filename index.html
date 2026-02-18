@@ -3,33 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Dock Barcode Tool</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 
 <style>
-:root { --app-height: 100vh; }
-
-html, body {
+body {
     margin:0;
-    padding:0;
-    height:var(--app-height);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     background:#f4f6f8;
     color:#333;
 }
 
 .container {
+    padding:16px;
     min-height:100vh;
     display:flex;
     flex-direction:column;
-    padding:16px;
 }
 
 header {
-    text-align:center;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
     margin-bottom:12px;
 }
 
@@ -44,6 +41,36 @@ header p {
     margin:4px 0 0;
 }
 
+.menu-btn {
+    font-size:22px;
+    background:none;
+    border:none;
+    cursor:pointer;
+}
+
+.action-menu {
+    display:none;
+    position:absolute;
+    top:60px;
+    right:16px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+    padding:10px;
+    width:180px;
+    z-index:100;
+}
+
+.action-menu button {
+    width:100%;
+    background:none;
+    border:none;
+    padding:10px;
+    text-align:left;
+    font-size:14px;
+    cursor:pointer;
+}
+
 .card {
     background:white;
     padding:16px;
@@ -56,10 +83,9 @@ header p {
     display:flex;
     gap:10px;
     margin-bottom:12px;
-    width:100%;
 }
 
-.tracking-row input {
+input, select {
     flex:1;
     padding:12px;
     border-radius:8px;
@@ -69,35 +95,19 @@ header p {
 
 .camera-btn {
     width:50px;
-    height:50px;
     border-radius:8px;
     border:1px solid #ddd;
     background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
 }
 
-select {
-    flex:1;
-    padding:12px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    font-size:15px;
-}
-
-button {
+.btn-primary {
+    background:#2563eb;
+    color:white;
+    border:none;
     padding:10px 16px;
     border-radius:8px;
-    border:none;
     cursor:pointer;
-    font-weight:500;
 }
-
-.btn-primary { background:#2563eb; color:white; }
-.btn-secondary { background:#e5e7eb; }
-.btn-danger { background:#dc2626; color:white; }
 
 #barcodeViewer { margin-top:10px; }
 
@@ -116,25 +126,37 @@ button {
 .expanded .barcode-item { display:block; }
 
 .tracking-label { margin-top:8px; font-weight:600; }
-.door-label { font-size:13px; color:#6b7280; margin-top:4px; }
+
+.door-section {
+    margin-top:6px;
+    font-size:13px;
+    color:#6b7280;
+}
+
+.edit-door-btn {
+    background:none;
+    border:none;
+    font-size:12px;
+    color:#2563eb;
+    cursor:pointer;
+}
 
 .pagination-controls {
     display:flex;
     justify-content:center;
-    align-items:center;
     gap:24px;
     margin-top:15px;
 }
 
-.arrow-btn {
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    background:white;
-    border:1px solid #e5e7eb;
+footer {
+    text-align:center;
+    font-size:12px;
+    color:#9ca3af;
+    margin-top:auto;
+    padding:12px 0;
 }
 
-/* Scanner Modal */
+/* Scanner */
 #scannerModal {
     position:fixed;
     inset:0;
@@ -143,13 +165,12 @@ button {
     align-items:center;
     justify-content:center;
     flex-direction:column;
-    z-index:1000;
 }
 
 #scannerContainer {
     position:relative;
     width:85vw;
-    max-width:380px;
+    max-width:360px;
 }
 
 #scannerModal video {
@@ -161,55 +182,23 @@ button {
     position:absolute;
     top:50%;
     left:50%;
-    width:80%;
-    height:35%;
-    transform:translate(-50%, -50%);
-    border:3px solid rgba(255,255,255,0.85);
+    width:85%;
+    height:30%;
+    transform:translate(-50%,-50%);
+    border:3px solid white;
     border-radius:8px;
-    pointer-events:none;
 }
 
 .scan-caption {
     margin-top:14px;
     color:white;
     font-size:14px;
-    text-align:center;
 }
 
-#closeScanner {
-    margin-top:12px;
-    background:#dc2626;
-    color:white;
-}
-
-.delete-btn {
-    position:absolute;
-    top:8px;
-    right:8px;
-    background:white;
-    border:none;
-    cursor:pointer;
-}
-
-.delete-btn svg {
-    width:18px;
-    height:18px;
-    stroke:#dc2626;
-}
-
-/* Print */
 @media print {
     body * { visibility:hidden; }
     #barcodeViewer, #barcodeViewer * { visibility:visible; }
     #barcodeViewer { position:absolute; left:0; top:0; width:100%; }
-}
-
-footer {
-    text-align:center;
-    font-size:12px;
-    color:#9ca3af;
-    margin-top:auto;
-    padding:12px 0;
 }
 </style>
 </head>
@@ -219,17 +208,25 @@ footer {
 <div class="container">
 
 <header>
-    <h1>Dock Barcode Tool</h1>
-    <p>Scan or generate tracking barcodes.</p>
+<div>
+<h1>Dock Barcode Tool</h1>
+<p>Scan or generate tracking barcodes.</p>
+</div>
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
 </header>
+
+<div class="action-menu" id="actionMenu">
+<button onclick="toggleView()">Toggle View</button>
+<button onclick="shareBarcodes()">Share</button>
+<button onclick="printBarcodes()">Print</button>
+<button onclick="clearAll()">Clear All</button>
+</div>
 
 <div class="card">
 
-<div class="row tracking-row">
+<div class="row">
 <input type="text" id="trackingInput" placeholder="Tracking Number(s) — use , or ;">
-<button class="camera-btn" onclick="startScanner()">
-📷
-</button>
+<button class="camera-btn" onclick="startScanner()">📷</button>
 </div>
 
 <div class="row">
@@ -239,21 +236,14 @@ footer {
 <button class="btn-primary" onclick="addBarcode()">Add</button>
 </div>
 
-<div class="row">
-<button class="btn-secondary" onclick="toggleView()">Toggle View</button>
-<button class="btn-secondary" onclick="shareBarcodes()">Share</button>
-<button class="btn-secondary" onclick="printBarcodes()">Print</button>
-<button class="btn-danger" onclick="clearAll()">Clear All</button>
-</div>
-
 </div>
 
 <div id="barcodeViewer"></div>
 
 <div class="pagination-controls" id="paginationControls">
-<button class="arrow-btn" onclick="prevBarcode()">←</button>
+<button onclick="prevBarcode()">←</button>
 <div id="pageIndicator">0 / 0</div>
-<button class="arrow-btn" onclick="nextBarcode()">→</button>
+<button onclick="nextBarcode()">→</button>
 </div>
 
 </div>
@@ -262,20 +252,18 @@ footer {
 Built by Joshua Miller © <span id="year"></span>
 </footer>
 
-<!-- Scanner Modal -->
 <div id="scannerModal">
 <div id="scannerContainer">
 <video id="video"></video>
 <div class="scan-frame"></div>
 </div>
 <div class="scan-caption">Place barcode inside the outline</div>
-<button id="closeScanner" onclick="stopScanner()">Close</button>
+<button onclick="stopScanner()">Close</button>
 </div>
 
 <script>
-document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("year").textContent=new Date().getFullYear();
 
-const doorSelect=document.getElementById("doorSelect");
 for(let i=1;i<=25;i++){
 let opt=document.createElement("option");
 opt.value="Door "+i;
@@ -287,11 +275,19 @@ let currentIndex=-1;
 let expandedView=false;
 let codeReader=null;
 
+/* Menu */
+function toggleMenu(){
+const menu=document.getElementById("actionMenu");
+menu.style.display=menu.style.display==="block"?"none":"block";
+}
+
+/* Scanner */
 function startScanner(){
 document.getElementById("scannerModal").style.display="flex";
 codeReader=new ZXing.BrowserBarcodeReader();
 codeReader.decodeFromVideoDevice(null,'video',(result)=>{
 if(result){
+navigator.vibrate?.(40);
 addBarcode(result.text);
 stopScanner();
 }
@@ -303,29 +299,26 @@ if(codeReader) codeReader.reset();
 document.getElementById("scannerModal").style.display="none";
 }
 
+/* Barcode logic */
 function updateViewer(){
 const items=document.querySelectorAll(".barcode-item");
-const pagination=document.getElementById("paginationControls");
-
 if(expandedView){
-document.getElementById("barcodeViewer").classList.add("expanded");
-pagination.style.display="none";
+barcodeViewer.classList.add("expanded");
+paginationControls.style.display="none";
 return;
 }else{
-document.getElementById("barcodeViewer").classList.remove("expanded");
-pagination.style.display="flex";
+barcodeViewer.classList.remove("expanded");
+paginationControls.style.display="flex";
 }
-
 items.forEach((item,i)=>item.classList.toggle("active",i===currentIndex));
-document.getElementById("pageIndicator").textContent=
-items.length?`${currentIndex+1} / ${items.length}`:"0 / 0";
+pageIndicator.textContent=items.length?`${currentIndex+1} / ${items.length}`:"0 / 0";
 }
 
 function toggleView(){ expandedView=!expandedView; updateViewer(); }
 
 function addBarcode(scanValue=null){
-const raw=scanValue||document.getElementById("trackingInput").value.trim();
-if(!raw) return alert("Enter tracking number");
+const raw=scanValue||trackingInput.value.trim();
+if(!raw) return;
 
 const entries=raw.split(/[,;]+/).map(e=>e.trim()).filter(Boolean);
 const door=doorSelect.value;
@@ -333,12 +326,6 @@ const door=doorSelect.value;
 entries.forEach(tracking=>{
 const div=document.createElement("div");
 div.className="barcode-item";
-
-const deleteBtn=document.createElement("button");
-deleteBtn.className="delete-btn";
-deleteBtn.innerHTML=`🗑`;
-deleteBtn.onclick=()=>deleteBarcode(div);
-div.appendChild(deleteBtn);
 
 const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
 div.appendChild(svg);
@@ -348,29 +335,27 @@ label.className="tracking-label";
 label.textContent=tracking;
 div.appendChild(label);
 
-if(door){
-const doorDiv=document.createElement("div");
-doorDiv.className="door-label";
-doorDiv.textContent=door;
-div.appendChild(doorDiv);
-}
+const doorSection=document.createElement("div");
+doorSection.className="door-section";
+doorSection.innerHTML=`<span>${door||"No Door"}</span> 
+<button class="edit-door-btn">Change</button>`;
+div.appendChild(doorSection);
 
-document.getElementById("barcodeViewer").appendChild(div);
+doorSection.querySelector("button").onclick=()=>{
+const newDoor=prompt("Enter new door (e.g. Door 5):",door||"");
+if(newDoor!==null){
+doorSection.querySelector("span").textContent=newDoor||"No Door";
+}
+};
+
+barcodeViewer.appendChild(div);
 JsBarcode(svg,tracking,{format:"CODE128",width:2,height:85,displayValue:false});
 });
 
 currentIndex=document.querySelectorAll(".barcode-item").length-1;
-document.getElementById("trackingInput").value="";
+trackingInput.value="";
+trackingInput.focus();
 updateViewer();
-}
-
-function deleteBarcode(el){
-if(confirm("Delete this barcode?")){
-el.remove();
-const items=document.querySelectorAll(".barcode-item");
-if(currentIndex>=items.length) currentIndex=items.length-1;
-updateViewer();
-}
 }
 
 function prevBarcode(){ if(currentIndex>0){currentIndex--;updateViewer();} }
@@ -381,29 +366,20 @@ if(currentIndex<items.length-1){currentIndex++;updateViewer();}
 
 function clearAll(){
 if(confirm("Clear all barcodes?")){
-document.getElementById("barcodeViewer").innerHTML="";
+barcodeViewer.innerHTML="";
 currentIndex=-1;
 updateViewer();
 }
 }
 
-function printBarcodes(){
-expandedView=true;
-updateViewer();
-window.print();
-}
+function printBarcodes(){ expandedView=true; updateViewer(); window.print(); }
 
 function shareBarcodes(){
 const items=[...document.querySelectorAll(".tracking-label")]
 .map(el=>el.textContent).join("\n");
-if(!items) return alert("No barcodes to share.");
-
-if(navigator.share){
-navigator.share({title:"Dock Barcodes",text:items});
-}else{
-navigator.clipboard.writeText(items);
-alert("Copied to clipboard.");
-}
+if(!items) return;
+navigator.share?.({title:"Dock Barcodes",text:items})
+|| navigator.clipboard.writeText(items);
 }
 
 updateViewer();
