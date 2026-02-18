@@ -308,6 +308,42 @@ if ('serviceWorker' in navigator) {
     <div class="row">
         <button class="btn-secondary" onclick="printBarcodes()">Print</button>
         <button class="btn-danger" onclick="clearAll()">Clear All</button>
+        <button id="viewToggle" class="btn-expand">Excpanded View</button>
+
+        <script>
+            let viewMode = "paged";
+
+            function renderPage() {
+                const pages = container.querySelectorAll('.barcode-item');
+
+                if (viewMode === "expanded") {
+                    pages.forEach(p => p.classList.add('active'));
+                    prevBtn.style.display = "none";
+                    nextBtn.style.display = "none";
+                    pageIndicator.style.display = "none";
+                } else {
+                    pages.forEach((p, i) =>
+                        p.classList.toggle('active', i === currentPage)
+                                  );
+                    prevBtn.style.display = "";
+                    nextBtn.style.display = "";
+                    pageIndicator.style.display = "";
+                }
+
+                pageIndicator.textContent = 
+                    pages.length === 0 ? '0/0' : '${currentPage + 1}/${pages.length}';
+
+                prevBtn.disabled = currentPage === 0;
+                nexBtn.disabled = currentPage === pages.length - 1;
+            }
+
+            document.getElementById("viewToggle").addEventListener("click", () => {
+                viewMode = viewMode === "paged" ? "expanded" : "paged";
+                document.getElementById("viewToggle").textContent = 
+                    viewMode === "paged" ? "Expanded View" : "Collapsed View";
+                renderPage();
+            });
+        </script>
     </div>
 
 </div>
