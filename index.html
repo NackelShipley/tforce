@@ -262,12 +262,46 @@ footer {
 <button class="menu-btn" onclick="toggleMenu()">☰</button>
 </header>
 
-<div class="action-menu" id="actionMenu">
-<button onclick="toggleView()">Toggle View</button>
-<button onclick="shareBarcodes()">Share</button>
-<button onclick="printBarcodes()">Print</button>
-<div class="menu-divider"></div>
-<button class="menu-danger" onclick="clearAll()">Clear All</button>
+<div id="actionMenu"
+     class="absolute right-0 mt-2 w-56 
+            bg-white/95 dark:bg-gray-800/95 
+            backdrop-blur-sm
+            border border-gray-200 dark:border-gray-700
+            rounded-xl shadow-xl
+            overflow-hidden z-50
+
+            origin-top-right
+            transform scale-95 opacity-0
+            pointer-events-none
+            transition-all duration-150 ease-out">
+
+  <!-- HEADER -->
+  <div class="px-4 py-2 text-xs font-semibold 
+              text-gray-400 uppercase tracking-wide">
+    Actions
+  </div>
+
+  <button class="w-full text-left px-4 py-2 
+                 hover:bg-gray-100 dark:hover:bg-gray-700 
+                 transition">
+    Change Door Assignments
+  </button>
+
+  <button class="w-full text-left px-4 py-2 
+                 hover:bg-gray-100 dark:hover:bg-gray-700 
+                 transition">
+    Re-Scan Mode
+  </button>
+
+  <div class="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+
+  <button class="w-full text-left px-4 py-2 
+                 text-red-600 dark:text-red-400
+                 hover:bg-red-50 dark:hover:bg-red-900/30 
+                 transition">
+    Delete All
+  </button>
+
 </div>
 
 <div class="card">
@@ -323,23 +357,37 @@ let currentIndex=-1;
 let expandedView=false;
 let codeReader=null;
 
-/* MENU */
-function toggleMenu(){
-const menu=document.getElementById("actionMenu");
-menu.style.display=menu.style.display==="block"?"none":"block";
+const actionBtn = document.getElementById("actionBtn");
+const actionMenu = document.getElementById("actionMenu");
+
+function openMenu() {
+  actionMenu.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+  actionMenu.classList.add("opacity-100", "scale-100");
 }
 
-    const actionBtn = document.getElementById("actionBtn");
-const actionMenu = document.getElementById("actionMenu");
+function closeMenu() {
+  actionMenu.classList.remove("opacity-100", "scale-100");
+  actionMenu.classList.add("opacity-0", "scale-95");
+
+  // allow animation to finish before disabling interaction
+  setTimeout(() => {
+    actionMenu.classList.add("pointer-events-none");
+  }, 150);
+}
 
 actionBtn.addEventListener("click", (e) => {
   e.stopPropagation();
-  actionMenu.classList.toggle("hidden");
+
+  if (actionMenu.classList.contains("opacity-0")) {
+    openMenu();
+  } else {
+    closeMenu();
+  }
 });
 
 document.addEventListener("click", (e) => {
   if (!actionMenu.contains(e.target) && !actionBtn.contains(e.target)) {
-    actionMenu.classList.add("hidden");
+    closeMenu();
   }
 });
 
