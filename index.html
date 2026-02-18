@@ -329,6 +329,20 @@ const menu=document.getElementById("actionMenu");
 menu.style.display=menu.style.display==="block"?"none":"block";
 }
 
+    const actionBtn = document.getElementById("actionBtn");
+const actionMenu = document.getElementById("actionMenu");
+
+actionBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  actionMenu.classList.toggle("hidden");
+});
+
+document.addEventListener("click", (e) => {
+  if (!actionMenu.contains(e.target) && !actionBtn.contains(e.target)) {
+    actionMenu.classList.add("hidden");
+  }
+});
+
 /* SCANNER */
 function startScanner(){
 document.getElementById("scannerModal").style.display="flex";
