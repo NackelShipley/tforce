@@ -154,59 +154,83 @@ body {
 }
 
 /* ========================== */
-/* Book Center */
+/* Book Center (Paged Look) */
 /* ========================== */
 
 .book-center {
   background: #ffffff;
-  padding: 30px;
+  padding: 30px 40px;
   overflow-y: auto;
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+}
+
+/* Subtle center crease */
+.book-center::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.04),
+    rgba(0,0,0,0.08),
+    rgba(0,0,0,0.04)
+  );
+  pointer-events: none;
 }
 
 /* ========================== */
-/* Business Card */
+/* Business Card (Reduced Height) */
 /* ========================== */
 
 .business-card {
   background: #f9fafb;
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 14px 16px;
   border: 1px solid #e5e7eb;
   transition: 0.2s ease;
   cursor: pointer;
+  min-height: 120px;
 }
 
 .business-card:hover {
   background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
 .business-title {
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .business-address {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #6b7280;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .business-hours {
-  margin-top: 12px;
+  margin-top: 8px;
   font-weight: 500;
+  font-size: 0.85rem;
 }
 
 .hard-close {
-  margin-top: 6px;
+  margin-top: 4px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   background: #fee2e2;
   color: #991b1b;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
   display: inline-block;
 }
 
@@ -215,6 +239,7 @@ body {
 /* ========================== */
 
 @media (max-width: 1000px) {
+
   .sidebar {
     display: none;
   }
@@ -224,6 +249,14 @@ body {
   }
 
   .letter-column {
+    display: none;
+  }
+
+  .book-center {
+    grid-template-columns: 1fr;
+  }
+
+  .book-center::before {
     display: none;
   }
 }
@@ -301,6 +334,34 @@ body {
           </div>
           <div class="hard-close">
             HARD CLOSE 2:30 PM
+          </div>
+        </div>
+
+        <div class="business-card">
+          <div class="business-title">Arrow Logistics</div>
+          <div class="business-address">
+            77 Supply Way<br>
+            Tempe, AZ 85282
+          </div>
+          <div class="business-hours">
+            🕒 8:00 AM – 5:00 PM
+          </div>
+          <div class="hard-close">
+            HARD CLOSE 4:30 PM
+          </div>
+        </div>
+
+        <div class="business-card">
+          <div class="business-title">Apex Manufacturing</div>
+          <div class="business-address">
+            400 Industry Dr<br>
+            Chandler, AZ 85225
+          </div>
+          <div class="business-hours">
+            🕒 6:30 AM – 3:30 PM
+          </div>
+          <div class="hard-close">
+            HARD CLOSE 3:00 PM
           </div>
         </div>
 
