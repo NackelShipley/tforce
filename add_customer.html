@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Add Customer - Polished Form</title>
+<title>Add Customer - Ledger Style</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 * { box-sizing: border-box; }
@@ -37,7 +37,7 @@ body {
 }
 .header { font-size: 28px; font-weight: 600; margin-bottom: 20px; color: #1f2937; }
 
-/* Form wrapper */
+/* Form wrapper / Book */
 .book-wrapper {
     position: relative;
     flex: 1;
@@ -56,6 +56,19 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    position: relative;
+}
+
+/* Center crease for "paged" look */
+.book::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+    transform: translateX(-50%);
 }
 
 /* Section headers */
@@ -98,15 +111,26 @@ body {
     background-color: #fffef8;
 }
 
-.input-group textarea { resize: vertical; min-height: 70px; }
+/* Fully rounded inputs for fields without icons */
+.input-rounded input,
+.input-rounded textarea {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
 
+/* Placeholder labels inside inputs */
+::placeholder { color: #9ca3af; font-weight: 500; }
+
+/* Input focus */
 .input-group input:focus,
-.input-group textarea:focus {
+.input-group textarea:focus,
+.input-rounded input:focus,
+.input-rounded textarea:focus {
     border-color: #9ca3af;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Required highlight */
+/* Required field highlight */
 input:required:invalid { border-color: #f87171; }
 input:required:valid { border-color: #34d399; }
 
@@ -192,7 +216,6 @@ input:required:valid { border-color: #34d399; }
 
                 <div class="input-group">
                     <div class="input-icon">
-                        <!-- Example: building SVG -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M4 22h16V2L4 2v20zm2-8h4v2H6v-2zm0-4h4v2H6v-2zm6 4h4v2h-4v-2zm0-4h4v2h-4v-2z"/></svg>
                     </div>
                     <input type="text" name="business_name" placeholder="Business Name *" required>
@@ -225,25 +248,25 @@ input:required:valid { border-color: #34d399; }
                     <input type="email" name="email" placeholder="Email">
                 </div>
 
-                <div class="input-group">
+                <div class="input-rounded">
                     <input type="time" name="hard_close" placeholder="Hard Close Time">
                 </div>
 
                 <div class="section-header">Primary Contact</div>
 
-                <div class="input-group">
+                <div class="input-rounded">
                     <input type="text" name="contact_name" placeholder="Default Contact Name *" required>
                 </div>
 
-                <div class="input-group">
+                <div class="input-rounded">
                     <input type="text" name="contact_phone" placeholder="Contact Phone">
                 </div>
 
-                <div class="input-group">
+                <div class="input-rounded">
                     <input type="text" name="extension" placeholder="Extension">
                 </div>
 
-                <div class="input-group">
+                <div class="input-rounded">
                     <textarea name="notes" placeholder="Notes"></textarea>
                 </div>
 
