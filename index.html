@@ -189,7 +189,9 @@ footer { text-align:center; font-size:12px; color:#9ca3af; margin-top:auto; padd
 /* ============================= */
 
 #printContainer {
-    display: none;
+    display: absolute;
+    top: -9999x;
+    left: -9999x;
 }
 
 /* Page layout for 8.5x11 */
@@ -537,17 +539,15 @@ async function shareBarcodes() {
   const container = buildPrintPages();
   if (!container) return;
 
-  container.style.display = "block";
 
   // Allow layout to render
-  await new Promise(resolve => requestAnimationFrame(resolve));
-
+await new Promise(resolve => setTimeout(resolve, 100));
+    
   const canvas = await html2canvas(container, {
     scale: 3,
     backgroundColor: "#ffffff"
   });
 
-  container.style.display = "none";
 
   const blob = await new Promise(resolve =>
     canvas.toBlob(resolve, "image/png")
