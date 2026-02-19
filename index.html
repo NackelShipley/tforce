@@ -321,8 +321,6 @@ viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-
 <script>
 document.getElementById("year").textContent=new Date().getFullYear();
 
-    document.onclick = () => actionMenu.style.display = "none";
-
 function addBarcodes(value=null) {
   const input = value || document.getElementById("trackingInput").value;
   const door = document.getElementById("doorSelect").value;
