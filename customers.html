@@ -53,7 +53,6 @@ body {
     margin: 10px;
 }
 
-/* HEADER */
 .header {
     font-size: 28px;
     font-weight: 600;
@@ -69,7 +68,6 @@ body {
     display: flex;
 }
 
-/* ========== BOOK ========== */
 .book {
     background: #fdfbf4;
     border-radius: 8px;
@@ -81,7 +79,6 @@ body {
     flex-direction: column;
 }
 
-/* CENTER CREASE */
 .book::before {
     content: "";
     position: absolute;
@@ -108,10 +105,6 @@ body {
     outline: none;
 }
 
-.search-bar input:focus {
-    border-color: #9ca3af;
-}
-
 /* ========== GRID ========== */
 .book-grid {
     display: grid;
@@ -121,16 +114,16 @@ body {
     padding-right: 5px;
 }
 
-/* ========== BUSINESS CARDS ========== */
+/* ========== REFINED BUSINESS CARD ========== */
 .business-card {
+    position: relative;
     background: #fffef8;
     border: 1px solid #e2dbc8;
     border-radius: 6px;
-    padding: 10px 12px;
-    font-size: 13px;
-    line-height: 1.25;
+    padding: 14px 16px;
     cursor: pointer;
     transition: all 0.15s ease;
+    min-height: 110px;
 }
 
 .business-card:hover {
@@ -139,33 +132,74 @@ body {
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
-.card-name {
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 4px;
-    border-bottom: 1px dashed #e4ddc8;
-    padding-bottom: 3px;
-}
-
-.card-row {
+/* Top Section */
+.card-header {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    align-items: flex-start;
+}
+
+.business-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Hard Close Time */
+.hard-close {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b45309; /* warm amber tone */
+    background: rgba(245, 158, 11, 0.12);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* Left Info */
+.card-details {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.card-details div {
     margin-bottom: 2px;
 }
 
-.label {
-    color: #8c8674;
-    font-weight: 500;
+/* Silhouette Icon */
+.contact-icon {
+    position: absolute;
+    right: 16px;
+    top: 55%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
 }
 
-.value {
-    color: #2c2c2c;
-    max-width: 65%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 6px;
     white-space: nowrap;
-    text-align: right;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.contact-wrapper {
+    position: relative;
+}
+
+.contact-wrapper:hover .tooltip {
+    opacity: 1;
 }
 
 /* ========== ALPHABET TABS ========== */
@@ -177,13 +211,8 @@ body {
     gap: 4px;
 }
 
-.tabs-left {
-    left: -32px;
-}
-
-.tabs-right {
-    right: -32px;
-}
+.tabs-left { left: -32px; }
+.tabs-right { right: -32px; }
 
 .tab {
     background: #e5e7eb;
@@ -205,7 +234,6 @@ body {
 
 <body>
 
-<!-- LEFT SIDEBAR -->
 <div class="sidebar">
     <h2>Database</h2>
     <a href="#">All Customers</a>
@@ -215,90 +243,57 @@ body {
     <a href="#">Settings</a>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main-content">
 
-    <div class="header">
-        Customer Rolodex
-    </div>
+    <div class="header">Customer Rolodex</div>
 
     <div class="book-wrapper">
 
-        <!-- LEFT LETTER TABS -->
         <div class="tabs-left">
-            <div class="tab">A</div>
-            <div class="tab">B</div>
-            <div class="tab">C</div>
-            <div class="tab">D</div>
-            <div class="tab">E</div>
-            <div class="tab">F</div>
-            <div class="tab">G</div>
-            <div class="tab">H</div>
-            <div class="tab">I</div>
-            <div class="tab">J</div>
-            <div class="tab">K</div>
-            <div class="tab">L</div>
+            <div class="tab">A</div><div class="tab">B</div><div class="tab">C</div>
+            <div class="tab">D</div><div class="tab">E</div><div class="tab">F</div>
+            <div class="tab">G</div><div class="tab">H</div><div class="tab">I</div>
+            <div class="tab">J</div><div class="tab">K</div><div class="tab">L</div>
             <div class="tab">M</div>
         </div>
 
-        <!-- RIGHT LETTER TABS -->
         <div class="tabs-right">
-            <div class="tab">N</div>
-            <div class="tab">O</div>
-            <div class="tab">P</div>
-            <div class="tab">Q</div>
-            <div class="tab">R</div>
-            <div class="tab">S</div>
-            <div class="tab">T</div>
-            <div class="tab">U</div>
-            <div class="tab">V</div>
-            <div class="tab">W</div>
-            <div class="tab">X</div>
-            <div class="tab">Y</div>
+            <div class="tab">N</div><div class="tab">O</div><div class="tab">P</div>
+            <div class="tab">Q</div><div class="tab">R</div><div class="tab">S</div>
+            <div class="tab">T</div><div class="tab">U</div><div class="tab">V</div>
+            <div class="tab">W</div><div class="tab">X</div><div class="tab">Y</div>
             <div class="tab">Z</div>
         </div>
 
-        <!-- BOOK -->
         <div class="book">
 
-            <!-- SEARCH -->
             <div class="search-bar">
                 <input type="text" placeholder="Search customers...">
             </div>
 
-            <!-- GRID -->
             <div class="book-grid">
 
+                <!-- BUSINESS CARD EXAMPLE -->
                 <div class="business-card">
-                    <div class="card-name">John Smith</div>
-                    <div class="card-row">
-                        <span class="label">Company</span>
-                        <span class="value">Safarizone Logistics</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="label">Phone</span>
-                        <span class="value">(555) 123-4567</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="label">Email</span>
-                        <span class="value">john@safarizone.com</span>
-                    </div>
-                </div>
 
-                <div class="business-card">
-                    <div class="card-name">Emily Carter</div>
-                    <div class="card-row">
-                        <span class="label">Company</span>
-                        <span class="value">Carter Freight Co.</span>
+                    <div class="card-header">
+                        <div class="business-name">Safarizone Logistics</div>
+                        <div class="hard-close">Closes 4:30 PM</div>
                     </div>
-                    <div class="card-row">
-                        <span class="label">Phone</span>
-                        <span class="value">(555) 987-6543</span>
+
+                    <div class="card-details">
+                        <div>1234 Industrial Ave, Suite 200</div>
+                        <div>(555) 123-4567</div>
                     </div>
-                    <div class="card-row">
-                        <span class="label">Email</span>
-                        <span class="value">emily@carterfreight.com</span>
+
+                    <div class="contact-wrapper">
+                        <div class="contact-icon">👤</div>
+                        <div class="tooltip">
+                            John Smith<br>
+                            (555) 123-4567 ext. 204
+                        </div>
                     </div>
+
                 </div>
 
             </div>
