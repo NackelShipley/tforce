@@ -3,145 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Rolodex</title>
+<title>Rolodex Binder Layout</title>
 
 <style>
-/* ============================= */
-/* Base Reset */
-/* ============================= */
-
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f3f4f6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #eef1f4;
   color: #111827;
 }
 
-/* ============================= */
+/* ========================= */
 /* Layout */
-/* ============================= */
+/* ========================= */
 
 .app {
   display: flex;
-  min-height: 100vh;
-}
-
-/* ============================= */
-/* Sidebar */
-/* ============================= */
-
-.sidebar {
-  width: 240px;
-  background: #111827;
-  color: white;
-  padding: 20px;
-  transition: 0.3s ease;
-}
-
-.sidebar.collapsed {
-  width: 70px;
-}
-
-.sidebar h2 {
-  font-size: 1.1rem;
-  margin-top: 0;
-}
-
-.nav-item {
-  margin: 14px 0;
-  cursor: pointer;
-  font-size: 0.95rem;
-  opacity: 0.9;
-}
-
-.nav-item:hover {
-  opacity: 1;
-}
-
-.sidebar-toggle {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-/* Mobile Sidebar */
-
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    left: -260px;
-    top: 0;
-    height: 100%;
-    z-index: 1000;
-  }
-
-  .sidebar.active {
-    left: 0;
-  }
-}
-
-/* ============================= */
-/* Main Content */
-/* ============================= */
-
-.main {
-  flex: 1;
-  padding: 30px;
-  transition: 0.3s ease;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  padding: 18px 30px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
 }
 
-.mobile-menu-btn {
-  display: none;
-  font-size: 1.4rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: block;
-  }
-}
-
-/* ============================= */
-/* Business Card */
-/* ============================= */
-
-.business-grid {
+.rolodex-layout {
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: 60px 1fr 60px;
+  overflow: hidden;
 }
+
+/* ========================= */
+/* Letter Tabs */
+/* ========================= */
+
+.letter-column {
+  background: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  gap: 6px;
+}
+
+.letter-tab {
+  width: 40px;
+  padding: 6px 0;
+  text-align: center;
+  font-size: 0.75rem;
+  border-radius: 6px 0 0 6px;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.right .letter-tab {
+  border-radius: 0 6px 6px 0;
+}
+
+.letter-tab:hover {
+  background: #cbd5e1;
+}
+
+.letter-tab.active {
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  transform: translateX(4px);
+}
+
+.right .letter-tab.active {
+  transform: translateX(-4px);
+}
+
+/* ========================= */
+/* Center "Book Pages" */
+/* ========================= */
+
+.book-center {
+  background: #ffffff;
+  padding: 30px;
+  overflow-y: auto;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* ========================= */
+/* Business Cards */
+/* ========================= */
 
 .business-card {
-  background: white;
+  background: #f9fafb;
   border-radius: 12px;
   padding: 18px;
+  margin-bottom: 20px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   transition: 0.2s ease;
-  position: relative;
   cursor: pointer;
 }
 
 .business-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .business-header {
@@ -151,32 +119,24 @@ body {
 }
 
 .business-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.business-title h3 {
-  margin: 0;
   font-weight: 600;
 }
 
 .business-address {
-  margin-top: 8px;
   font-size: 0.9rem;
   color: #6b7280;
+  margin-top: 6px;
 }
 
 .business-hours {
   margin-top: 12px;
   font-weight: 500;
-  font-size: 0.95rem;
 }
 
 .hard-close {
   margin-top: 6px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   background: #fee2e2;
   color: #991b1b;
   padding: 4px 8px;
@@ -184,123 +144,18 @@ body {
   display: inline-block;
 }
 
-/* ============================= */
-/* Primary Contact Tooltip */
-/* ============================= */
+/* ========================= */
+/* Responsive */
+/* ========================= */
 
-.primary-contact-icon {
-  position: relative;
-  cursor: pointer;
-}
+@media (max-width: 900px) {
+  .rolodex-layout {
+    grid-template-columns: 1fr;
+  }
 
-.primary-contact-icon svg {
-  width: 22px;
-  height: 22px;
-  stroke: #6b7280;
-  fill: none;
-  stroke-width: 2;
-}
-
-.primary-contact-icon::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  top: -38px;
-  right: 0;
-  background: #111827;
-  color: white;
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.2s ease;
-}
-
-.primary-contact-icon:hover::after {
-  opacity: 1;
-}
-
-/* ============================= */
-/* Contact Overlay */
-/* ============================= */
-
-.contact-overlay {
-  position: fixed;
-  top: 0;
-  right: -600px;
-  width: 600px;
-  height: 100%;
-  background: #f9fafb;
-  box-shadow: -4px 0 12px rgba(0,0,0,0.08);
-  transition: 0.3s ease;
-  overflow-y: auto;
-  padding: 30px;
-  z-index: 999;
-}
-
-.contact-overlay.active {
-  right: 0;
-}
-
-.overlay-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.close-overlay {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-/* ============================= */
-/* Contact Card */
-/* ============================= */
-
-.contact-card {
-  background: white;
-  border-radius: 10px;
-  padding: 16px;
-  margin-top: 18px;
-  border: 1px solid #e5e7eb;
-  border-left: 5px solid #10b981;
-}
-
-.contact-card.priority-1 { border-left-color: #10b981; }
-.contact-card.priority-2 { border-left-color: #34d399; }
-.contact-card.priority-3 { border-left-color: #f59e0b; }
-.contact-card.priority-4 { border-left-color: #9ca3af; }
-
-.contact-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.contact-header h4 {
-  margin: 0;
-  font-weight: 600;
-}
-
-.priority-badge {
-  font-size: 0.75rem;
-  background: #e5e7eb;
-  padding: 3px 6px;
-  border-radius: 5px;
-}
-
-.contact-info {
-  margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.contact-notes {
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #4b5563;
+  .letter-column {
+    display: none;
+  }
 }
 </style>
 </head>
@@ -309,40 +164,35 @@ body {
 
 <div class="app">
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
-    <h2>Operations</h2>
-    <div class="nav-item">Customers</div>
-    <div class="nav-item">Pickups</div>
-    <div class="nav-item">Reports</div>
+  <div class="header">
+    Customer Rolodex
   </div>
 
-  <!-- Main -->
-  <div class="main">
+  <div class="rolodex-layout">
 
-    <div class="header">
-      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-      <h2>Customer Rolodex</h2>
+    <!-- Left Letters A–M -->
+    <div class="letter-column left">
+      <div class="letter-tab active">A</div>
+      <div class="letter-tab">B</div>
+      <div class="letter-tab">C</div>
+      <div class="letter-tab">D</div>
+      <div class="letter-tab">E</div>
+      <div class="letter-tab">F</div>
+      <div class="letter-tab">G</div>
+      <div class="letter-tab">H</div>
+      <div class="letter-tab">I</div>
+      <div class="letter-tab">J</div>
+      <div class="letter-tab">K</div>
+      <div class="letter-tab">L</div>
+      <div class="letter-tab">M</div>
     </div>
 
-    <div class="business-grid">
+    <!-- Center Book Content -->
+    <div class="book-center">
 
-      <div class="business-card" onclick="openOverlay()">
-
+      <div class="business-card">
         <div class="business-header">
-          <div class="business-title">
-            <span>🏢</span>
-            <h3>Acme Distribution</h3>
-          </div>
-
-          <div class="primary-contact-icon"
-               data-tooltip="John Davis • (555) 555-1234 ext 204">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="8" r="4"></circle>
-              <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6"></path>
-            </svg>
-          </div>
+          <div class="business-title">Acme Distribution</div>
         </div>
 
         <div class="business-address">
@@ -357,78 +207,49 @@ body {
         <div class="hard-close">
           HARD CLOSE 3:30 PM
         </div>
+      </div>
 
+      <div class="business-card">
+        <div class="business-header">
+          <div class="business-title">Atlas Freight</div>
+        </div>
+
+        <div class="business-address">
+          900 Dock Rd<br>
+          Mesa, AZ 85201
+        </div>
+
+        <div class="business-hours">
+          🕒 6:00 AM – 3:00 PM
+        </div>
+
+        <div class="hard-close">
+          HARD CLOSE 2:30 PM
+        </div>
       </div>
 
     </div>
+
+    <!-- Right Letters N–Z -->
+    <div class="letter-column right">
+      <div class="letter-tab">N</div>
+      <div class="letter-tab">O</div>
+      <div class="letter-tab">P</div>
+      <div class="letter-tab">Q</div>
+      <div class="letter-tab">R</div>
+      <div class="letter-tab">S</div>
+      <div class="letter-tab">T</div>
+      <div class="letter-tab">U</div>
+      <div class="letter-tab">V</div>
+      <div class="letter-tab">W</div>
+      <div class="letter-tab">X</div>
+      <div class="letter-tab">Y</div>
+      <div class="letter-tab">Z</div>
+    </div>
+
   </div>
 
 </div>
-
-<!-- Contact Overlay -->
-<div class="contact-overlay" id="contactOverlay">
-
-  <div class="overlay-header">
-    <h3>Acme Distribution Contacts</h3>
-    <button class="close-overlay" onclick="closeOverlay()">✕</button>
-  </div>
-
-  <div class="contact-card priority-1">
-    <div class="contact-header">
-      <h4>John Davis</h4>
-      <span class="priority-badge">Primary</span>
-    </div>
-    <div class="contact-info">
-      📞 (555) 555-1234 ext 204<br>
-      ✉ john@acme.com
-    </div>
-    <div class="contact-notes">
-      Prefers text before calling.
-    </div>
-  </div>
-
-  <div class="contact-card priority-3">
-    <div class="contact-header">
-      <h4>Melissa Carter</h4>
-      <span class="priority-badge">Backup</span>
-    </div>
-    <div class="contact-info">
-      📞 (555) 555-8877<br>
-      ✉ melissa@acme.com
-    </div>
-  </div>
-
-</div>
-
-<script>
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("collapsed");
-}
-
-function toggleMobileMenu() {
-  document.getElementById("sidebar").classList.toggle("active");
-}
-
-function openOverlay() {
-  document.getElementById("contactOverlay").classList.add("active");
-}
-
-function closeOverlay() {
-  document.getElementById("contactOverlay").classList.remove("active");
-}
-
-/* Click outside overlay to close */
-document.addEventListener("click", function(e) {
-  const overlay = document.getElementById("contactOverlay");
-  const card = document.querySelector(".business-card");
-
-  if (overlay.classList.contains("active") &&
-      !overlay.contains(e.target) &&
-      !card.contains(e.target)) {
-    overlay.classList.remove("active");
-  }
-});
-</script>
 
 </body>
 </html>
