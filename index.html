@@ -509,11 +509,11 @@ function buildPrintPages() {
       const door = document.createElement("div");
       door.className = "print-door";
 
-      const doorSelect = item.querySelector("select");
+      const doorDropdown = item.querySelector("select");
       const doorSpan = item.querySelector(".door-section span");
 
       door.textContent =
-        doorSelect?.value || doorSpan?.textContent || "";
+        doorDropdown?.value || doorSpan?.textContent || "";
 
       card.appendChild(door);
 
