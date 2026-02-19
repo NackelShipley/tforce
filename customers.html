@@ -3,361 +3,431 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Database</title>
+<title>Customer Rolodex</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", "Segoe UI", sans-serif; }
-body { background: #eef1f4; color: #1f2933; }
+/* ============================= */
+/* Base Reset */
+/* ============================= */
 
-/* =============================
-   APP LAYOUT
-============================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* ============================= */
+/* Layout */
+/* ============================= */
 
 .app {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
+/* ============================= */
 /* Sidebar */
+/* ============================= */
+
 .sidebar {
   width: 240px;
-  background: #1e2933;
-  color: #cbd5e1;
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  transition: transform .3s ease;
+  background: #111827;
+  color: white;
+  padding: 20px;
+  transition: 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 70px;
 }
 
 .sidebar h2 {
-  padding: 0 20px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: .7;
-}
-
-.sidebar button {
-  background: none;
-  border: none;
-  color: inherit;
-  text-align: left;
-  padding: 14px 20px;
-  cursor: pointer;
-  font-size: .95rem;
-  border-left: 4px solid transparent;
-  transition: all .2s ease;
-}
-
-.sidebar button:hover,
-.sidebar button.active {
-  background: #2a3642;
-  border-left: 4px solid #3b82f6;
-  color: #fff;
-}
-
-/* Top Bar */
-.topbar {
-  height: 60px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-}
-
-.topbar h1 {
   font-size: 1.1rem;
-  font-weight: 600;
+  margin-top: 0;
 }
 
-.menu-btn {
-  display: none;
+.nav-item {
+  margin: 14px 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.nav-item:hover {
+  opacity: 1;
+}
+
+.sidebar-toggle {
   background: none;
   border: none;
-  font-size: 1.3rem;
+  color: white;
   cursor: pointer;
-}
-
-/* Main Content */
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-/* =============================
-   SEARCH + ALPHABET BAR
-============================= */
-
-.control-bar {
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  font-size: 1.2rem;
   margin-bottom: 20px;
 }
 
-.search-input {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: .95rem;
-  margin-bottom: 12px;
-}
-
-.alphabet {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.alphabet button {
-  border: none;
-  padding: 5px 8px;
-  font-size: .8rem;
-  border-radius: 5px;
-  background: #e5e7eb;
-  cursor: pointer;
-  transition: .2s ease;
-}
-
-.alphabet button.active {
-  background: #3b82f6;
-  color: #fff;
-}
-
-/* =============================
-   BUSINESS GRID
-============================= */
-
-.business-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 15px;
-}
-
-.business-card {
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-  cursor: pointer;
-  transition: .15s ease;
-}
-
-.business-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0,0,0,.08);
-}
-
-.business-card h3 {
-  font-size: .95rem;
-  margin-bottom: 5px;
-}
-
-.business-card p {
-  font-size: .8rem;
-  color: #6b7280;
-}
-
-/* =============================
-   SLIDE PANEL
-============================= */
-
-.overlay-dim {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.35);
-  display: none;
-}
-
-.overlay-dim.active {
-  display: block;
-}
-
-.slide-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  background: #fff;
-  box-shadow: -4px 0 15px rgba(0,0,0,.15);
-  transform: translateX(100%);
-  transition: transform .3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.slide-panel.active {
-  transform: translateX(0);
-}
-
-.panel-header {
-  padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.panel-body {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-/* =============================
-   CONTACT CARDS
-============================= */
-
-.contact-card {
-  background: #f9fafb;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  border-left: 4px solid #e5e7eb;
-}
-
-.contact-card.primary {
-  border-left-color: #16a34a;
-}
-
-.contact-card h4 {
-  font-size: .9rem;
-  margin-bottom: 5px;
-}
-
-.contact-card p {
-  font-size: .8rem;
-  margin-bottom: 4px;
-  color: #4b5563;
-}
-
-/* =============================
-   RESPONSIVE
-============================= */
-
-@media (max-width: 1024px) {
-  .slide-panel {
-    width: 65%;
-  }
-}
+/* Mobile Sidebar */
 
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
+    left: -260px;
+    top: 0;
     height: 100%;
-    transform: translateX(-100%);
-    z-index: 10;
+    z-index: 1000;
   }
 
   .sidebar.active {
-    transform: translateX(0);
+    left: 0;
   }
+}
 
-  .menu-btn {
+/* ============================= */
+/* Main Content */
+/* ============================= */
+
+.main {
+  flex: 1;
+  padding: 30px;
+  transition: 0.3s ease;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  font-size: 1.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
     display: block;
   }
+}
 
-  .slide-panel {
-    width: 100%;
-  }
+/* ============================= */
+/* Business Card */
+/* ============================= */
+
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.business-card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.business-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+}
+
+.business-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.business-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.business-title h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.business-address {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.business-hours {
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.hard-close {
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ============================= */
+/* Primary Contact Tooltip */
+/* ============================= */
+
+.primary-contact-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.primary-contact-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #6b7280;
+  fill: none;
+  stroke-width: 2;
+}
+
+.primary-contact-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -38px;
+  right: 0;
+  background: #111827;
+  color: white;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+
+.primary-contact-icon:hover::after {
+  opacity: 1;
+}
+
+/* ============================= */
+/* Contact Overlay */
+/* ============================= */
+
+.contact-overlay {
+  position: fixed;
+  top: 0;
+  right: -600px;
+  width: 600px;
+  height: 100%;
+  background: #f9fafb;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.08);
+  transition: 0.3s ease;
+  overflow-y: auto;
+  padding: 30px;
+  z-index: 999;
+}
+
+.contact-overlay.active {
+  right: 0;
+}
+
+.overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-overlay {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ============================= */
+/* Contact Card */
+/* ============================= */
+
+.contact-card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 18px;
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid #10b981;
+}
+
+.contact-card.priority-1 { border-left-color: #10b981; }
+.contact-card.priority-2 { border-left-color: #34d399; }
+.contact-card.priority-3 { border-left-color: #f59e0b; }
+.contact-card.priority-4 { border-left-color: #9ca3af; }
+
+.contact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contact-header h4 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.priority-badge {
+  font-size: 0.75rem;
+  background: #e5e7eb;
+  padding: 3px 6px;
+  border-radius: 5px;
+}
+
+.contact-info {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.contact-notes {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #4b5563;
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
+
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
-    <h2>Customer Suite</h2>
-    <button class="active">Rolodex</button>
-    <button>Add Customer</button>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    <h2>Operations</h2>
+    <div class="nav-item">Customers</div>
+    <div class="nav-item">Pickups</div>
+    <div class="nav-item">Reports</div>
   </div>
 
-  <div class="content-wrapper">
-    <div class="topbar">
-      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-      <h1>Customer Rolodex</h1>
-      <div>Supervisor Access</div>
+  <!-- Main -->
+  <div class="main">
+
+    <div class="header">
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+      <h2>Customer Rolodex</h2>
     </div>
 
-    <div class="main-content">
-      <div class="control-bar">
-        <input class="search-input" placeholder="Search business name...">
-        <div class="alphabet">
-          <button>A</button><button>B</button><button>C</button>
-          <button>D</button><button>E</button><button>F</button>
-          <button>G</button><button>H</button><button>I</button>
-          <button>J</button><button>K</button><button>L</button>
-          <button>M</button><button>N</button><button>O</button>
-          <button>P</button><button>Q</button><button>R</button>
-          <button>S</button><button>T</button><button>U</button>
-          <button>V</button><button>W</button><button>X</button>
-          <button>Y</button><button>Z</button>
-        </div>
-      </div>
+    <div class="business-grid">
 
-      <div class="business-grid">
-        <div class="business-card" onclick="openPanel()">
-          <h3>Acme Logistics</h3>
-          <p>Primary: Jane Doe</p>
+      <div class="business-card" onclick="openOverlay()">
+
+        <div class="business-header">
+          <div class="business-title">
+            <span>🏢</span>
+            <h3>Acme Distribution</h3>
+          </div>
+
+          <div class="primary-contact-icon"
+               data-tooltip="John Davis • (555) 555-1234 ext 204">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6"></path>
+            </svg>
+          </div>
         </div>
 
-        <div class="business-card" onclick="openPanel()">
-          <h3>Metro Transport</h3>
-          <p>Primary: Chris Allen</p>
+        <div class="business-address">
+          1234 Industrial Blvd<br>
+          Phoenix, AZ 85009
         </div>
+
+        <div class="business-hours">
+          🕒 7:00 AM – 4:30 PM
+        </div>
+
+        <div class="hard-close">
+          HARD CLOSE 3:30 PM
+        </div>
+
       </div>
+
     </div>
   </div>
+
 </div>
 
-<div class="overlay-dim" id="dim" onclick="closePanel()"></div>
+<!-- Contact Overlay -->
+<div class="contact-overlay" id="contactOverlay">
 
-<div class="slide-panel" id="panel">
-  <div class="panel-header">
-    <h2>Acme Logistics</h2>
-    <button onclick="closePanel()">×</button>
+  <div class="overlay-header">
+    <h3>Acme Distribution Contacts</h3>
+    <button class="close-overlay" onclick="closeOverlay()">✕</button>
   </div>
-  <div class="panel-body">
-    <div class="contact-card primary">
-      <h4>Jane Doe</h4>
-      <p>Shipping Manager</p>
-      <p>555-1234</p>
-      <p>jane@acme.com</p>
-    </div>
 
-    <div class="contact-card">
-      <h4>Mark Hill</h4>
-      <p>Assistant Manager</p>
-      <p>555-5678</p>
-      <p>mark@acme.com</p>
+  <div class="contact-card priority-1">
+    <div class="contact-header">
+      <h4>John Davis</h4>
+      <span class="priority-badge">Primary</span>
+    </div>
+    <div class="contact-info">
+      📞 (555) 555-1234 ext 204<br>
+      ✉ john@acme.com
+    </div>
+    <div class="contact-notes">
+      Prefers text before calling.
     </div>
   </div>
+
+  <div class="contact-card priority-3">
+    <div class="contact-header">
+      <h4>Melissa Carter</h4>
+      <span class="priority-badge">Backup</span>
+    </div>
+    <div class="contact-info">
+      📞 (555) 555-8877<br>
+      ✉ melissa@acme.com
+    </div>
+  </div>
+
 </div>
 
 <script>
-function openPanel(){
-  document.getElementById("panel").classList.add("active");
-  document.getElementById("dim").classList.add("active");
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("collapsed");
 }
-function closePanel(){
-  document.getElementById("panel").classList.remove("active");
-  document.getElementById("dim").classList.remove("active");
-}
-function toggleSidebar(){
+
+function toggleMobileMenu() {
   document.getElementById("sidebar").classList.toggle("active");
 }
+
+function openOverlay() {
+  document.getElementById("contactOverlay").classList.add("active");
+}
+
+function closeOverlay() {
+  document.getElementById("contactOverlay").classList.remove("active");
+}
+
+/* Click outside overlay to close */
+document.addEventListener("click", function(e) {
+  const overlay = document.getElementById("contactOverlay");
+  const card = document.querySelector(".business-card");
+
+  if (overlay.classList.contains("active") &&
+      !overlay.contains(e.target) &&
+      !card.contains(e.target)) {
+    overlay.classList.remove("active");
+  }
+});
 </script>
 
 </body>
