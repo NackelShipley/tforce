@@ -6,11 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(to bottom, #eef4ff, #e6f4ec);
     display: flex;
+    height: 100vh;
 }
 
 /* ========== LEFT DATABASE NAVIGATION ========== */
@@ -19,14 +24,12 @@ body {
     background: #1f2937;
     color: white;
     padding: 25px 20px;
-    box-sizing: border-box;
     min-height: 100vh;
 }
 
 .sidebar h2 {
     margin-top: 0;
     font-size: 20px;
-    letter-spacing: 1px;
 }
 
 .sidebar a {
@@ -45,29 +48,35 @@ body {
 .main-content {
     flex: 1;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* HEADER */
 .header {
     font-size: 28px;
     font-weight: 600;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: #1f2937;
 }
 
-/* ========== BOOK CONTAINER ========== */
+/* ========== BOOK WRAPPER ========== */
 .book-wrapper {
     position: relative;
-    max-width: 1100px;
-    margin: 0 auto;
+    flex: 1;
+    display: flex;
 }
 
+/* ========== BOOK ========== */
 .book {
     background: #fdfbf4;
     border-radius: 8px;
-    padding: 35px 40px;
+    padding: 30px 40px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* CENTER CREASE */
@@ -82,45 +91,34 @@ body {
     transform: translateX(-50%);
 }
 
-/* ========== ALPHABET TABS ========== */
-.tabs-left, .tabs-right {
-    position: absolute;
-    top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+/* ========== SEARCH BAR ========== */
+.search-bar {
+    margin-bottom: 20px;
 }
 
-.tabs-left {
-    left: -35px;
+.search-bar input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
 }
 
-.tabs-right {
-    right: -35px;
+.search-bar input:focus {
+    border-color: #9ca3af;
 }
 
-.tab {
-    background: #e5e7eb;
-    padding: 6px 8px;
-    font-size: 11px;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-    width: 24px;
-}
-
-.tab:hover {
-    background: #d1d5db;
-}
-
-/* ========== GRID LAYOUT ========== */
+/* ========== GRID ========== */
 .book-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    overflow-y: auto;
+    padding-right: 5px;
 }
 
-/* ========== COMPACT BUSINESS CARDS ========== */
+/* ========== BUSINESS CARDS ========== */
 .business-card {
     background: #fffef8;
     border: 1px solid #e2dbc8;
@@ -167,12 +165,43 @@ body {
     text-align: right;
 }
 
+/* ========== ALPHABET TABS ========== */
+.tabs-left, .tabs-right {
+    position: absolute;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tabs-left {
+    left: -32px;
+}
+
+.tabs-right {
+    right: -32px;
+}
+
+.tab {
+    background: #e5e7eb;
+    padding: 5px 6px;
+    font-size: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    width: 22px;
+}
+
+.tab:hover {
+    background: #d1d5db;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- LEFT DATABASE NAVIGATION -->
+<!-- LEFT SIDEBAR -->
 <div class="sidebar">
     <h2>Database</h2>
     <a href="#">All Customers</a>
@@ -191,15 +220,34 @@ body {
 
     <div class="book-wrapper">
 
-        <!-- Alphabet Tabs -->
+        <!-- LEFT LETTER TABS -->
         <div class="tabs-left">
             <div class="tab">A</div>
             <div class="tab">B</div>
             <div class="tab">C</div>
             <div class="tab">D</div>
+            <div class="tab">E</div>
+            <div class="tab">F</div>
+            <div class="tab">G</div>
+            <div class="tab">H</div>
+            <div class="tab">I</div>
+            <div class="tab">J</div>
+            <div class="tab">K</div>
+            <div class="tab">L</div>
+            <div class="tab">M</div>
         </div>
 
+        <!-- RIGHT LETTER TABS -->
         <div class="tabs-right">
+            <div class="tab">N</div>
+            <div class="tab">O</div>
+            <div class="tab">P</div>
+            <div class="tab">Q</div>
+            <div class="tab">R</div>
+            <div class="tab">S</div>
+            <div class="tab">T</div>
+            <div class="tab">U</div>
+            <div class="tab">V</div>
             <div class="tab">W</div>
             <div class="tab">X</div>
             <div class="tab">Y</div>
@@ -209,9 +257,14 @@ body {
         <!-- BOOK -->
         <div class="book">
 
+            <!-- SEARCH -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search customers...">
+            </div>
+
+            <!-- GRID -->
             <div class="book-grid">
 
-                <!-- Example Business Cards -->
                 <div class="business-card">
                     <div class="card-name">John Smith</div>
                     <div class="card-row">
@@ -248,7 +301,6 @@ body {
 
         </div>
     </div>
-
 </div>
 
 </body>
