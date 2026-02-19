@@ -123,7 +123,6 @@ form label {
 }
 
 form input, form textarea, form select {
-    width: 100%;
     padding: 10px 12px;
     margin-bottom: 16px;
     border-radius: 8px;
@@ -139,6 +138,25 @@ form input:focus, form textarea:focus, form select:focus {
 }
 
 textarea { resize: vertical; min-height: 70px; }
+
+/* ZIP / CITY / STATE ROW */
+.zip-city-state {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.zip-city-state input {
+    margin-bottom: 0;
+}
+
+#zip { width: 80px; }
+#city { flex: 1; background-color: #e5e7eb; cursor: not-allowed; }
+#state { width: 50px; background-color: #e5e7eb; cursor: not-allowed; }
+
+/* Highlight required fields */
+input:required:invalid { border-color: #f87171; }
+input:required:valid { border-color: #34d399; }
 
 /* ========== SAVE/CANCEL BUTTONS ========== */
 .form-buttons {
@@ -177,10 +195,9 @@ textarea { resize: vertical; min-height: 70px; }
 
 /* Responsive tweaks */
 @media (max-width: 900px) {
-    .add-customer-form {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
+    .add-customer-form { grid-template-columns: 1fr; gap: 20px; }
+    .zip-city-state { flex-direction: column; }
+    #zip, #city, #state { width: 100%; cursor: auto; background-color: white; }
 }
 </style>
 </head>
@@ -208,20 +225,17 @@ textarea { resize: vertical; min-height: 70px; }
                 
                 <!-- LEFT PAGE: Business Info -->
                 <div class="left-page" data-section="Business Info">
-                    <label for="business_name">Business Name</label>
+                    <label for="business_name">Business Name *</label>
                     <input type="text" id="business_name" name="business_name" required>
 
-                    <label for="address">Address</label>
+                    <label for="address">Address *</label>
                     <input type="text" id="address" name="address" required>
 
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" required>
-
-                    <label for="state">State</label>
-                    <input type="text" id="state" name="state" required>
-
-                    <label for="zip">Zip</label>
-                    <input type="text" id="zip" name="zip" required>
+                    <div class="zip-city-state">
+                        <input type="text" id="zip" name="zip" placeholder="Zip *" required>
+                        <input type="text" id="city" name="city" placeholder="City" disabled>
+                        <input type="text" id="state" name="state" placeholder="ST" disabled>
+                    </div>
 
                     <label for="phone">Main Phone</label>
                     <input type="text" id="phone" name="phone">
@@ -238,7 +252,7 @@ textarea { resize: vertical; min-height: 70px; }
 
                 <!-- RIGHT PAGE: Contact Info -->
                 <div class="right-page" data-section="Primary Contact">
-                    <label for="contact_name">Default Contact Name</label>
+                    <label for="contact_name">Default Contact Name *</label>
                     <input type="text" id="contact_name" name="contact_name" required>
 
                     <label for="contact_phone">Contact Phone</label>
