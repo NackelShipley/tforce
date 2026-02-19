@@ -319,6 +319,54 @@ viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-
 <script>
 document.getElementById("year").textContent=new Date().getFullYear();
 
+    document.onclick = () => actionMenu.style.display = "none";
+
+function addBarcodes(value=null) {
+  const input = value || document.getElementById("trackingInput").value;
+  const door = document.getElementById("doorSelect").value;
+  if (!input) return;
+
+  input.split(/[,;]+/).forEach(code => {
+    code = code.trim();
+    if (!code) return;
+
+    const item = document.createElement("div");
+    item.className = "barcode-item";
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    JsBarcode(svg, code, { format: "CODE128" });
+
+    const label = document.createElement("div");
+    label.className = "tracking-label";
+    label.textContent = code;
+
+    const select = document.createElement("select");
+    select.className = "door-select";
+    ["Door 1","Door 2","Door 3"].forEach(d=>{
+      const opt=document.createElement("option");
+      opt.value=d; opt.textContent=d;
+      if(d===door) opt.selected=true;
+      select.appendChild(opt);
+    });
+
+    const del = document.createElement("button");
+    del.className="delete-btn";
+    del.innerHTML=`<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m-1 0v14H9V6h6z"/></svg>`;
+    del.onclick=()=>{
+      if(confirm("Delete this barcode?")) item.remove();
+    };
+
+    item.appendChild(del);
+    item.appendChild(svg);
+    item.appendChild(label);
+    item.appendChild(select);
+
+    viewer.prepend(item);
+  });
+
+  document.getElementById("trackingInput").value="";
+}
+    
 const doorSelect=document.getElementById("doorSelect");
 for(let i=1;i<=25;i++){
 let opt=document.createElement("option");
