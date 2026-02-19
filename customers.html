@@ -3,292 +3,330 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Database Prototype</title>
+<title>Customer Database – Prototype V2</title>
+
 <style>
-  /* Reset and base styling */
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
-  body { background: #f8f9fa; color: #333; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
+body { background: #f4f6f8; color: #2c2f33; overflow: hidden; }
 
-  /* Login screen */
-  #login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: linear-gradient(135deg,#4b79a1,#283e51);
-    color: #fff;
-    flex-direction: column;
-  }
-  #login-screen h1 { margin-bottom: 20px; font-size: 2rem; }
-  #login-screen input {
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: none;
-    width: 250px;
-    font-size: 1rem;
-  }
-  #login-screen button {
-    padding: 12px 20px;
-    background: #00aaff;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-  }
-  #login-screen button:hover { background: #008ecc; }
+/* Layout */
+#app { display: flex; height: 100vh; }
 
-  /* Main dashboard */
-  #dashboard { display: none; height: 100vh; overflow: hidden; }
-  .sidebar {
-    width: 200px;
-    background: #343a40;
-    color: #fff;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding-top: 20px;
-  }
-  .sidebar button {
-    padding: 15px 20px;
-    border: none;
-    background: none;
-    color: #fff;
-    text-align: left;
-    font-size: 1rem;
-    cursor: pointer;
-    border-left: 4px solid transparent;
-    transition: all 0.2s;
-  }
-  .sidebar button.active, .sidebar button:hover {
-    background: #495057;
-    border-left: 4px solid #00aaff;
-  }
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #1f2933;
+  color: #fff;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar h2 {
+  padding: 0 20px 20px 20px;
+  font-weight: 500;
+  font-size: 1.1rem;
+  opacity: .8;
+}
+.sidebar button {
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  text-align: left;
+  cursor: pointer;
+  font-size: .95rem;
+  transition: all .2s ease;
+  border-left: 4px solid transparent;
+}
+.sidebar button:hover,
+.sidebar button.active {
+  background: #2a3642;
+  border-left: 4px solid #3b82f6;
+  color: #fff;
+}
 
-  .main-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
+/* Main */
+.main {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+}
 
-  /* Rolodex-style customer list */
-  .alphabet-nav { display: flex; flex-wrap: wrap; margin-bottom: 15px; }
-  .alphabet-nav button {
-    margin: 2px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 4px;
-    background: #e9ecef;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .alphabet-nav button:hover { background: #ced4da; }
+/* Search */
+.search-bar {
+  margin-bottom: 15px;
+}
+.search-bar input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: .95rem;
+}
 
-  .customer-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-  .customer-card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 15px;
-    width: 200px;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .customer-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-  .customer-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
-  .customer-card p { font-size: 0.9rem; color: #555; }
+/* Alphabet */
+.alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.alphabet button {
+  margin: 3px;
+  padding: 6px 9px;
+  border-radius: 5px;
+  border: none;
+  background: #e5e7eb;
+  cursor: pointer;
+  font-size: .8rem;
+  transition: background .2s;
+}
+.alphabet button.active {
+  background: #3b82f6;
+  color: #fff;
+}
+.alphabet button:hover {
+  background: #cbd5e1;
+}
 
-  /* Overlay/modal for customer details */
-  .overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-  .overlay-content {
-    background: #fff;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 100%;
-    padding: 20px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  }
-  .overlay-content h2 { margin-bottom: 10px; }
-  .overlay-content .close-btn {
-    position: absolute;
-    top: 10px; right: 15px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: none;
-    background: none;
-  }
-  .contact-info { margin-top: 10px; }
-  .contact-info div { margin-bottom: 8px; }
-  .contact-info label { font-weight: bold; margin-right: 5px; color: #333; }
+/* Rolodex Cards */
+.business-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.business-card {
+  background: #fff;
+  width: 220px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.business-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 12px rgba(0,0,0,.12);
+}
+.business-card h3 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+.business-card p {
+  font-size: .85rem;
+  color: #6b7280;
+}
 
-  /* Data Entry Form */
-  .data-entry-form {
-    max-width: 500px;
-    background: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-  .data-entry-form h2 { margin-bottom: 15px; }
-  .data-entry-form label { display: block; margin-bottom: 5px; font-weight: 500; }
-  .data-entry-form input, .data-entry-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 0.95rem;
-  }
-  .data-entry-form button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    background: #00aaff;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-  }
-  .data-entry-form button:hover { background: #008ecc; }
+/* Slide Panel */
+.panel-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -4px 0 15px rgba(0,0,0,.15);
+  transform: translateX(100%);
+  transition: transform .3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.panel-overlay.active {
+  transform: translateX(0);
+}
+.panel-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-header h2 {
+  font-weight: 600;
+}
+.panel-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* Contact Cards */
+.contact-card {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 4px solid transparent;
+}
+.contact-card.priority-1 { border-left-color: #16a34a; }
+.contact-card.priority-2 { border-left-color: #f59e0b; }
+.contact-card.priority-3 { border-left-color: #ef4444; }
+
+.contact-card h4 {
+  margin-bottom: 5px;
+  font-size: .95rem;
+}
+.contact-card p {
+  font-size: .85rem;
+  margin-bottom: 4px;
+  color: #4b5563;
+}
+
+.priority-badge {
+  font-size: .7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #e5e7eb;
+  margin-left: 8px;
+}
+
+/* Dim background when panel open */
+.dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;
+}
+.dim.active {
+  display: block;
+}
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
-<div id="login-screen">
-  <h1>Customer Database Login</h1>
-  <input type="password" placeholder="Enter Password" id="login-password">
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- Dashboard -->
-<div id="dashboard" style="display:flex;">
+<div id="app">
   <div class="sidebar">
-    <button class="active" onclick="switchTab('rolodex')">Rolodex</button>
-    <button onclick="switchTab('add')">Add Customer</button>
-    <button onclick="switchTab('notes')">Notes</button>
+    <h2>Customer Suite</h2>
+    <button class="active">Rolodex</button>
+    <button>Add Customer</button>
   </div>
 
-  <div class="main-content">
-    <!-- Rolodex Tab -->
-    <div id="rolodex">
-      <div class="alphabet-nav">
-        <button>A</button><button>B</button><button>C</button><button>D</button>
-        <button>E</button><button>F</button><button>G</button><button>H</button>
-        <button>I</button><button>J</button><button>K</button><button>L</button>
-        <button>M</button><button>N</button><button>O</button><button>P</button>
-        <button>Q</button><button>R</button><button>S</button><button>T</button>
-        <button>U</button><button>V</button><button>W</button><button>X</button>
-        <button>Y</button><button>Z</button>
-      </div>
-      <div class="customer-list">
-        <div class="customer-card" onclick="openOverlay('Acme Corp')">
-          <h3>Acme Corp</h3>
-          <p>Primary Contact: Jane Doe</p>
-        </div>
-        <div class="customer-card" onclick="openOverlay('Beta Industries')">
-          <h3>Beta Industries</h3>
-          <p>Primary Contact: John Smith</p>
-        </div>
-        <div class="customer-card" onclick="openOverlay('Gamma LLC')">
-          <h3>Gamma LLC</h3>
-          <p>Primary Contact: Alice Johnson</p>
-        </div>
-      </div>
+  <div class="main">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search business name...">
     </div>
 
-    <!-- Add Customer Tab -->
-    <div id="add" style="display:none;">
-      <div class="data-entry-form">
-        <h2>Add Customer</h2>
-        <label>Business Name</label>
-        <input type="text">
-        <label>Address</label>
-        <input type="text">
-        <label>Primary Contact Name</label>
-        <input type="text">
-        <label>Phone / Ext.</label>
-        <input type="text">
-        <label>Email</label>
-        <input type="email">
-        <label>Job Title</label>
-        <input type="text">
-        <button>Add Customer</button>
-      </div>
-    </div>
+    <div class="alphabet" id="alphabetNav"></div>
 
-    <!-- Notes Tab (placeholder) -->
-    <div id="notes" style="display:none;">
-      <h2>Notes</h2>
-      <p>Placeholder for notes or other info pages.</p>
-    </div>
+    <div class="business-grid" id="businessGrid"></div>
   </div>
 </div>
 
-<!-- Overlay / Modal for Customer Details -->
-<div class="overlay" id="customer-overlay">
-  <div class="overlay-content">
-    <button class="close-btn" onclick="closeOverlay()">×</button>
-    <h2 id="overlay-business-name">Business Name</h2>
-    <div class="contact-info">
-      <div><label>Address:</label> <span id="overlay-address">123 Main St.</span></div>
-      <div><label>Primary Contact:</label> <span id="overlay-contact">Jane Doe</span></div>
-      <div><label>Phone / Ext:</label> <span id="overlay-phone">(555) 123-4567</span></div>
-      <div><label>Email:</label> <span id="overlay-email">jane@example.com</span></div>
-      <div><label>Job Title:</label> <span id="overlay-title">Manager</span></div>
-    </div>
+<div class="dim" id="dimLayer" onclick="closePanel()"></div>
+
+<div class="panel-overlay" id="detailPanel">
+  <div class="panel-header">
+    <h2 id="panelBusinessName">Business Name</h2>
+    <button class="close-btn" onclick="closePanel()">×</button>
   </div>
+  <div class="panel-body" id="panelContacts"></div>
 </div>
 
 <script>
-  // Mock Login
-  function login() {
-    const pw = document.getElementById('login-password').value;
-    if(pw === 'admin123'){ // placeholder password
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'flex';
-    } else {
-      alert('Incorrect password!');
-    }
+const businesses = [
+  {
+    name: "Acme Logistics",
+    contacts: [
+      { name: "Jane Doe", title: "Shipping Manager", phone: "555-1234", email: "jane@acme.com", priority: 1 },
+      { name: "Mark Hill", title: "Assistant Manager", phone: "555-5678", email: "mark@acme.com", priority: 2 }
+    ]
+  },
+  {
+    name: "Beta Freight",
+    contacts: [
+      { name: "Lisa Smith", title: "Operations Lead", phone: "555-2222", email: "lisa@beta.com", priority: 1 }
+    ]
+  },
+  {
+    name: "Metro Transport",
+    contacts: [
+      { name: "Chris Allen", title: "Dispatcher", phone: "555-8888", email: "chris@metro.com", priority: 2 }
+    ]
   }
+];
 
-  // Tab switching
-  function switchTab(tab) {
-    const tabs = ['rolodex','add','notes'];
-    tabs.forEach(t => document.getElementById(t).style.display = t===tab ? 'block':'none');
-    document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  }
+const grid = document.getElementById("businessGrid");
+const searchInput = document.getElementById("searchInput");
+const alphabetNav = document.getElementById("alphabetNav");
 
-  // Overlay
-  function openOverlay(businessName){
-    document.getElementById('overlay-business-name').textContent = businessName;
-    // Placeholder static info
-    document.getElementById('overlay-address').textContent = '123 Main St.';
-    document.getElementById('overlay-contact').textContent = 'Jane Doe';
-    document.getElementById('overlay-phone').textContent = '(555) 123-4567';
-    document.getElementById('overlay-email').textContent = 'jane@example.com';
-    document.getElementById('overlay-title').textContent = 'Manager';
-    document.getElementById('customer-overlay').style.display = 'flex';
-  }
-  function closeOverlay(){
-    document.getElementById('customer-overlay').style.display = 'none';
-  }
+function renderAlphabet() {
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+    const btn = document.createElement("button");
+    btn.textContent = letter;
+    btn.onclick = () => filterByLetter(letter, btn);
+    alphabetNav.appendChild(btn);
+  });
+}
+
+function renderBusinesses(list) {
+  grid.innerHTML = "";
+  list.forEach(biz => {
+    const card = document.createElement("div");
+    card.className = "business-card";
+    card.innerHTML = `
+      <h3>${biz.name}</h3>
+      <p>Primary: ${getPrimaryContact(biz)}</p>
+    `;
+    card.onclick = () => openPanel(biz);
+    grid.appendChild(card);
+  });
+}
+
+function getPrimaryContact(biz) {
+  const sorted = biz.contacts.sort((a,b)=>a.priority-b.priority);
+  return sorted.length ? sorted[0].name : "—";
+}
+
+function filterByLetter(letter, btn) {
+  document.querySelectorAll(".alphabet button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const filtered = businesses.filter(b=>b.name.startsWith(letter));
+  renderBusinesses(filtered);
+}
+
+searchInput.addEventListener("input", () => {
+  const value = searchInput.value.toLowerCase();
+  const filtered = businesses.filter(b=>b.name.toLowerCase().includes(value));
+  renderBusinesses(filtered);
+});
+
+function openPanel(biz) {
+  document.getElementById("panelBusinessName").textContent = biz.name;
+  const container = document.getElementById("panelContacts");
+  container.innerHTML = "";
+
+  biz.contacts
+    .sort((a,b)=>a.priority-b.priority)
+    .forEach(contact => {
+      const div = document.createElement("div");
+      div.className = `contact-card priority-${contact.priority}`;
+      div.innerHTML = `
+        <h4>${contact.name}
+          <span class="priority-badge">Priority ${contact.priority}</span>
+        </h4>
+        <p>${contact.title}</p>
+        <p>${contact.phone}</p>
+        <p>${contact.email}</p>
+      `;
+      container.appendChild(div);
+    });
+
+  document.getElementById("detailPanel").classList.add("active");
+  document.getElementById("dimLayer").classList.add("active");
+}
+
+function closePanel() {
+  document.getElementById("detailPanel").classList.remove("active");
+  document.getElementById("dimLayer").classList.remove("active");
+}
+
+renderAlphabet();
+renderBusinesses(businesses);
 </script>
 
 </body>
