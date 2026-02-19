@@ -7,6 +7,7 @@
 
 <style>
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -14,22 +15,93 @@ body {
   color: #111827;
 }
 
-/* ========================= */
-/* Layout */
-/* ========================= */
+/* ========================== */
+/* App Layout */
+/* ========================== */
 
 .app {
   display: flex;
-  flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
-.header {
-  padding: 18px 30px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+/* ========================== */
+/* LEFT DATABASE NAVIGATION */
+/* ========================== */
+
+.sidebar {
+  width: 240px;
+  background: #111827;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+}
+
+.sidebar h2 {
+  margin: 0 0 25px 0;
+  font-size: 1.1rem;
   font-weight: 600;
 }
+
+.nav-item {
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nav-item:hover {
+  opacity: 1;
+}
+
+.nav-item.active {
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* ========================== */
+/* RIGHT MAIN AREA */
+/* ========================== */
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ========================== */
+/* Styled Header */
+/* ========================== */
+
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.search-box {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #e5e7eb;
+  outline: none;
+}
+
+/* ========================== */
+/* Rolodex Book Layout */
+/* ========================== */
 
 .rolodex-layout {
   flex: 1;
@@ -38,21 +110,21 @@ body {
   overflow: hidden;
 }
 
-/* ========================= */
+/* ========================== */
 /* Letter Tabs */
-/* ========================= */
+/* ========================== */
 
 .letter-column {
   background: #e5e7eb;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
+  padding-top: 12px;
   gap: 6px;
 }
 
 .letter-tab {
-  width: 40px;
+  width: 42px;
   padding: 6px 0;
   text-align: center;
   font-size: 0.75rem;
@@ -74,16 +146,16 @@ body {
   background: #3b82f6;
   color: white;
   font-weight: 600;
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
 .right .letter-tab.active {
-  transform: translateX(-4px);
+  transform: translateX(-5px);
 }
 
-/* ========================= */
-/* Center "Book Pages" */
-/* ========================= */
+/* ========================== */
+/* Book Center */
+/* ========================== */
 
 .book-center {
   background: #ffffff;
@@ -93,9 +165,9 @@ body {
   border-right: 1px solid #e5e7eb;
 }
 
-/* ========================= */
-/* Business Cards */
-/* ========================= */
+/* ========================== */
+/* Business Card */
+/* ========================== */
 
 .business-card {
   background: #f9fafb;
@@ -110,12 +182,6 @@ body {
 .business-card:hover {
   background: #ffffff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.business-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .business-title {
@@ -144,11 +210,15 @@ body {
   display: inline-block;
 }
 
-/* ========================= */
+/* ========================== */
 /* Responsive */
-/* ========================= */
+/* ========================== */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
+  .sidebar {
+    display: none;
+  }
+
   .rolodex-layout {
     grid-template-columns: 1fr;
   }
@@ -164,87 +234,95 @@ body {
 
 <div class="app">
 
-  <div class="header">
-    Customer Rolodex
+  <!-- DATABASE NAVIGATION -->
+  <div class="sidebar">
+    <h2>Database</h2>
+    <div class="nav-item active">Customers</div>
+    <div class="nav-item">Contacts</div>
+    <div class="nav-item">Pickup History</div>
+    <div class="nav-item">Reports</div>
+    <div class="nav-item">Settings</div>
   </div>
 
-  <div class="rolodex-layout">
+  <!-- MAIN CONTENT -->
+  <div class="main">
 
-    <!-- Left Letters A–M -->
-    <div class="letter-column left">
-      <div class="letter-tab active">A</div>
-      <div class="letter-tab">B</div>
-      <div class="letter-tab">C</div>
-      <div class="letter-tab">D</div>
-      <div class="letter-tab">E</div>
-      <div class="letter-tab">F</div>
-      <div class="letter-tab">G</div>
-      <div class="letter-tab">H</div>
-      <div class="letter-tab">I</div>
-      <div class="letter-tab">J</div>
-      <div class="letter-tab">K</div>
-      <div class="letter-tab">L</div>
-      <div class="letter-tab">M</div>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-title">Customer Rolodex</div>
+      <input class="search-box" placeholder="Search customers..." />
     </div>
 
-    <!-- Center Book Content -->
-    <div class="book-center">
+    <!-- BOOK -->
+    <div class="rolodex-layout">
 
-      <div class="business-card">
-        <div class="business-header">
+      <!-- Left Letters A–M -->
+      <div class="letter-column left">
+        <div class="letter-tab active">A</div>
+        <div class="letter-tab">B</div>
+        <div class="letter-tab">C</div>
+        <div class="letter-tab">D</div>
+        <div class="letter-tab">E</div>
+        <div class="letter-tab">F</div>
+        <div class="letter-tab">G</div>
+        <div class="letter-tab">H</div>
+        <div class="letter-tab">I</div>
+        <div class="letter-tab">J</div>
+        <div class="letter-tab">K</div>
+        <div class="letter-tab">L</div>
+        <div class="letter-tab">M</div>
+      </div>
+
+      <!-- Center Book Content -->
+      <div class="book-center">
+
+        <div class="business-card">
           <div class="business-title">Acme Distribution</div>
+          <div class="business-address">
+            1234 Industrial Blvd<br>
+            Phoenix, AZ 85009
+          </div>
+          <div class="business-hours">
+            🕒 7:00 AM – 4:30 PM
+          </div>
+          <div class="hard-close">
+            HARD CLOSE 3:30 PM
+          </div>
         </div>
 
-        <div class="business-address">
-          1234 Industrial Blvd<br>
-          Phoenix, AZ 85009
-        </div>
-
-        <div class="business-hours">
-          🕒 7:00 AM – 4:30 PM
-        </div>
-
-        <div class="hard-close">
-          HARD CLOSE 3:30 PM
-        </div>
-      </div>
-
-      <div class="business-card">
-        <div class="business-header">
+        <div class="business-card">
           <div class="business-title">Atlas Freight</div>
+          <div class="business-address">
+            900 Dock Rd<br>
+            Mesa, AZ 85201
+          </div>
+          <div class="business-hours">
+            🕒 6:00 AM – 3:00 PM
+          </div>
+          <div class="hard-close">
+            HARD CLOSE 2:30 PM
+          </div>
         </div>
 
-        <div class="business-address">
-          900 Dock Rd<br>
-          Mesa, AZ 85201
-        </div>
-
-        <div class="business-hours">
-          🕒 6:00 AM – 3:00 PM
-        </div>
-
-        <div class="hard-close">
-          HARD CLOSE 2:30 PM
-        </div>
       </div>
 
-    </div>
+      <!-- Right Letters N–Z -->
+      <div class="letter-column right">
+        <div class="letter-tab">N</div>
+        <div class="letter-tab">O</div>
+        <div class="letter-tab">P</div>
+        <div class="letter-tab">Q</div>
+        <div class="letter-tab">R</div>
+        <div class="letter-tab">S</div>
+        <div class="letter-tab">T</div>
+        <div class="letter-tab">U</div>
+        <div class="letter-tab">V</div>
+        <div class="letter-tab">W</div>
+        <div class="letter-tab">X</div>
+        <div class="letter-tab">Y</div>
+        <div class="letter-tab">Z</div>
+      </div>
 
-    <!-- Right Letters N–Z -->
-    <div class="letter-column right">
-      <div class="letter-tab">N</div>
-      <div class="letter-tab">O</div>
-      <div class="letter-tab">P</div>
-      <div class="letter-tab">Q</div>
-      <div class="letter-tab">R</div>
-      <div class="letter-tab">S</div>
-      <div class="letter-tab">T</div>
-      <div class="letter-tab">U</div>
-      <div class="letter-tab">V</div>
-      <div class="letter-tab">W</div>
-      <div class="letter-tab">X</div>
-      <div class="letter-tab">Y</div>
-      <div class="letter-tab">Z</div>
     </div>
 
   </div>
