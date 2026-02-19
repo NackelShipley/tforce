@@ -310,6 +310,10 @@ viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-
 </div>
 <div class="scan-caption">Place barcode inside the outline</div>
 <button onclick="stopScanner()">Close</button>
+
+
+    <div id="printContainer"></div>
+    
 </div>
 
 <script>
@@ -416,37 +420,108 @@ function nextBarcode(){ const items=document.querySelectorAll(".barcode-item"); 
 
 function clearAll(){ if(confirm("Clear all barcodes?")){ barcodeViewer.innerHTML=""; currentIndex=-1; updateViewer(); } }
 
+function buildPrintPages() {
+  const items = document.querySelectorAll(".barcode-item");
+  if (!items.length) {
+    alert("No barcodes available.");
+    return null;
+  }
+
+  const container = document.getElementById("printContainer");
+  container.innerHTML = "";
+
+  const perPage = 8;
+
+  for (let i = 0; i < items.length; i += perPage) {
+    const page = document.createElement("div");
+    page.className = "print-page";
+
+    const slice = Array.from(items).slice(i, i + perPage);
+
+    slice.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "print-barcode";
+
+      // Clone ONLY the barcode SVG
+      const barcodeSvg = item.querySelector("svg");
+      if (barcodeSvg) {
+        card.appendChild(barcodeSvg.cloneNode(true));
+      }
+
+      // Tracking number
+      const tracking = document.createElement("div");
+      tracking.className = "print-tracking";
+      tracking.textContent =
+        item.querySelector(".tracking-label")?.textContent || "";
+      card.appendChild(tracking);
+
+      // Door assignment (handles select OR span structure)
+      const door = document.createElement("div");
+      door.className = "print-door";
+
+      const doorSelect = item.querySelector("select");
+      const doorSpan = item.querySelector(".door-section span");
+
+      door.textContent =
+        doorSelect?.value || doorSpan?.textContent || "";
+
+      card.appendChild(door);
+
+      page.appendChild(card);
+    });
+
+    container.appendChild(page);
+  }
+
+  return container;
+}
+    
 /* PRINT */
-function printBarcodes(){ expandedView=true; updateViewer(); window.print(); }
+function printBarcodes() {
+    const container buildPrintPages();
+    if (!container) return;
+
+    window.print();
+}
 
 /* SHARE */
 async function shareBarcodes() {
-    const container = document.getElementById("barcodeViewer");
-    if (!container.children.length) return alert("No barcodes to share!");
+  const container = buildPrintPages();
+  if (!container) return;
 
-    // Expand all for the capture
-    container.classList.add("expanded");
+  container.style.display = "block";
 
-    try {
-        const canvas = await html2canvas(container, { scale: 2 });
-        const dataUrl = canvas.toDataURL("image/png");
-        const blob = await (await fetch(dataUrl)).blob();
-        const file = new File([blob], "DockBarcodes.png", { type: "image/png" });
+  // Allow layout to render
+  await new Promise(resolve => requestAnimationFrame(resolve));
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: "Dock Barcodes" });
-        } else {
-            // fallback: open image in new tab
-            const win = window.open();
-            win.document.write(`<img src="${dataUrl}" style="width:100%">`);
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Sharing failed, please try again.");
-    } finally {
-        // restore pagination view if needed
-        if (!expandedView) container.classList.remove("expanded");
-    }
+  const canvas = await html2canvas(container, {
+    scale: 3,
+    backgroundColor: "#ffffff"
+  });
+
+  container.style.display = "none";
+
+  const blob = await new Promise(resolve =>
+    canvas.toBlob(resolve, "image/png")
+  );
+
+  const file = new File([blob], "DockBarcodes.png", {
+    type: "image/png"
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      files: [file],
+      title: "Dock Barcodes"
+    });
+  } else {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "DockBarcodes.png";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 /* ENTER KEY SUPPORT */
