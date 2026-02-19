@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Database Prototype</title>
+<style>
+  /* Reset and base styling */
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+  body { background: #f8f9fa; color: #333; }
+
+  /* Login screen */
+  #login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg,#4b79a1,#283e51);
+    color: #fff;
+    flex-direction: column;
+  }
+  #login-screen h1 { margin-bottom: 20px; font-size: 2rem; }
+  #login-screen input {
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: none;
+    width: 250px;
+    font-size: 1rem;
+  }
+  #login-screen button {
+    padding: 12px 20px;
+    background: #00aaff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  #login-screen button:hover { background: #008ecc; }
+
+  /* Main dashboard */
+  #dashboard { display: none; height: 100vh; overflow: hidden; }
+  .sidebar {
+    width: 200px;
+    background: #343a40;
+    color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+  }
+  .sidebar button {
+    padding: 15px 20px;
+    border: none;
+    background: none;
+    color: #fff;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+  }
+  .sidebar button.active, .sidebar button:hover {
+    background: #495057;
+    border-left: 4px solid #00aaff;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  /* Rolodex-style customer list */
+  .alphabet-nav { display: flex; flex-wrap: wrap; margin-bottom: 15px; }
+  .alphabet-nav button {
+    margin: 2px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #e9ecef;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .alphabet-nav button:hover { background: #ced4da; }
+
+  .customer-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .customer-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 15px;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .customer-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+  .customer-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
+  .customer-card p { font-size: 0.9rem; color: #555; }
+
+  /* Overlay/modal for customer details */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .overlay-content {
+    background: #fff;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+  .overlay-content h2 { margin-bottom: 10px; }
+  .overlay-content .close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  .contact-info { margin-top: 10px; }
+  .contact-info div { margin-bottom: 8px; }
+  .contact-info label { font-weight: bold; margin-right: 5px; color: #333; }
+
+  /* Data Entry Form */
+  .data-entry-form {
+    max-width: 500px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .data-entry-form h2 { margin-bottom: 15px; }
+  .data-entry-form label { display: block; margin-bottom: 5px; font-weight: 500; }
+  .data-entry-form input, .data-entry-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+  }
+  .data-entry-form button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #00aaff;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .data-entry-form button:hover { background: #008ecc; }
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <h1>Customer Database Login</h1>
+  <input type="password" placeholder="Enter Password" id="login-password">
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" style="display:flex;">
+  <div class="sidebar">
+    <button class="active" onclick="switchTab('rolodex')">Rolodex</button>
+    <button onclick="switchTab('add')">Add Customer</button>
+    <button onclick="switchTab('notes')">Notes</button>
+  </div>
+
+  <div class="main-content">
+    <!-- Rolodex Tab -->
+    <div id="rolodex">
+      <div class="alphabet-nav">
+        <button>A</button><button>B</button><button>C</button><button>D</button>
+        <button>E</button><button>F</button><button>G</button><button>H</button>
+        <button>I</button><button>J</button><button>K</button><button>L</button>
+        <button>M</button><button>N</button><button>O</button><button>P</button>
+        <button>Q</button><button>R</button><button>S</button><button>T</button>
+        <button>U</button><button>V</button><button>W</button><button>X</button>
+        <button>Y</button><button>Z</button>
+      </div>
+      <div class="customer-list">
+        <div class="customer-card" onclick="openOverlay('Acme Corp')">
+          <h3>Acme Corp</h3>
+          <p>Primary Contact: Jane Doe</p>
+        </div>
+        <div class="customer-card" onclick="openOverlay('Beta Industries')">
+          <h3>Beta Industries</h3>
+          <p>Primary Contact: John Smith</p>
+        </div>
+        <div class="customer-card" onclick="openOverlay('Gamma LLC')">
+          <h3>Gamma LLC</h3>
+          <p>Primary Contact: Alice Johnson</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Customer Tab -->
+    <div id="add" style="display:none;">
+      <div class="data-entry-form">
+        <h2>Add Customer</h2>
+        <label>Business Name</label>
+        <input type="text">
+        <label>Address</label>
+        <input type="text">
+        <label>Primary Contact Name</label>
+        <input type="text">
+        <label>Phone / Ext.</label>
+        <input type="text">
+        <label>Email</label>
+        <input type="email">
+        <label>Job Title</label>
+        <input type="text">
+        <button>Add Customer</button>
+      </div>
+    </div>
+
+    <!-- Notes Tab (placeholder) -->
+    <div id="notes" style="display:none;">
+      <h2>Notes</h2>
+      <p>Placeholder for notes or other info pages.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay / Modal for Customer Details -->
+<div class="overlay" id="customer-overlay">
+  <div class="overlay-content">
+    <button class="close-btn" onclick="closeOverlay()">×</button>
+    <h2 id="overlay-business-name">Business Name</h2>
+    <div class="contact-info">
+      <div><label>Address:</label> <span id="overlay-address">123 Main St.</span></div>
+      <div><label>Primary Contact:</label> <span id="overlay-contact">Jane Doe</span></div>
+      <div><label>Phone / Ext:</label> <span id="overlay-phone">(555) 123-4567</span></div>
+      <div><label>Email:</label> <span id="overlay-email">jane@example.com</span></div>
+      <div><label>Job Title:</label> <span id="overlay-title">Manager</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Mock Login
+  function login() {
+    const pw = document.getElementById('login-password').value;
+    if(pw === 'admin123'){ // placeholder password
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+    } else {
+      alert('Incorrect password!');
+    }
+  }
+
+  // Tab switching
+  function switchTab(tab) {
+    const tabs = ['rolodex','add','notes'];
+    tabs.forEach(t => document.getElementById(t).style.display = t===tab ? 'block':'none');
+    document.querySelectorAll('.sidebar button').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  // Overlay
+  function openOverlay(businessName){
+    document.getElementById('overlay-business-name').textContent = businessName;
+    // Placeholder static info
+    document.getElementById('overlay-address').textContent = '123 Main St.';
+    document.getElementById('overlay-contact').textContent = 'Jane Doe';
+    document.getElementById('overlay-phone').textContent = '(555) 123-4567';
+    document.getElementById('overlay-email').textContent = 'jane@example.com';
+    document.getElementById('overlay-title').textContent = 'Manager';
+    document.getElementById('customer-overlay').style.display = 'flex';
+  }
+  function closeOverlay(){
+    document.getElementById('customer-overlay').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
