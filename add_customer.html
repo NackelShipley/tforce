@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Customer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #eef4ff, #e6f4ec);
+    display: flex;
+    height: 100vh;
+}
+
+/* ========== LEFT DATABASE NAVIGATION ========== */
+.sidebar {
+    width: 240px;
+    background: #1f2937;
+    color: white;
+    padding: 25px 20px;
+    min-height: 100vh;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.sidebar a:hover {
+    color: white;
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.header {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-left: -20px;
+    color: #1f2937;
+}
+
+/* ========== BOOK WRAPPER ========== */
+.book-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+}
+
+.book {
+    background: #fdfbf4;
+    border-radius: 8px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* CENTER CREASE */
+.book::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+    transform: translateX(-50%);
+}
+
+/* ========== FORM GRID ========== */
+.add-customer-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* ========== FORM ELEMENTS ========== */
+form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #1f2937;
+    font-size: 13px;
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
+    outline: none;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+    border-color: #9ca3af;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* ========== SAVE/CANCEL BUTTONS ========== */
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.button-save {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button-save:hover {
+    background-color: #2563eb;
+}
+
+.button-cancel {
+    background-color: #f3f4f6;
+    color: #374151;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.button-cancel:hover {
+    background-color: #e5e7eb;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+    .add-customer-form {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>Database</h2>
+    <a href="#">All Customers</a>
+    <a href="#">Add Customer</a>
+    <a href="#">Recent Activity</a>
+    <a href="#">Archived</a>
+    <a href="#">Settings</a>
+</div>
+
+<div class="main-content">
+
+    <div class="header">Add New Customer</div>
+
+    <div class="book-wrapper">
+
+        <div class="book">
+
+            <form class="add-customer-form" method="POST" action="save_customer.php">
+                
+                <!-- LEFT PAGE: Business Info -->
+                <div class="left-page">
+                    <label for="business_name">Business Name</label>
+                    <input type="text" id="business_name" name="business_name" required>
+
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required>
+
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
+
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" required>
+
+                    <label for="zip">Zip</label>
+                    <input type="text" id="zip" name="zip" required>
+
+                    <label for="phone">Main Phone</label>
+                    <input type="text" id="phone" name="phone">
+
+                    <label for="fax">Fax</label>
+                    <input type="text" id="fax" name="fax">
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+
+                    <label for="hard_close">Hard Close Time</label>
+                    <input type="time" id="hard_close" name="hard_close">
+                </div>
+
+                <!-- RIGHT PAGE: Contact Info -->
+                <div class="right-page">
+                    <label for="contact_name">Default Contact Name</label>
+                    <input type="text" id="contact_name" name="contact_name" required>
+
+                    <label for="contact_phone">Contact Phone</label>
+                    <input type="text" id="contact_phone" name="contact_phone">
+
+                    <label for="extension">Extension</label>
+                    <input type="text" id="extension" name="extension">
+
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes"></textarea>
+
+                    <div class="form-buttons">
+                        <button type="button" class="button-cancel">Cancel</button>
+                        <button type="submit" class="button-save">Save Customer</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
