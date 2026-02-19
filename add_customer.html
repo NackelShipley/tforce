@@ -113,30 +113,62 @@ body {
 }
 
 /* ========== FORM ELEMENTS ========== */
-form label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: #1f2937;
-    font-size: 13px;
+/* Input group for icon + field */
+.input-group {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: center;
 }
 
-form input, form textarea, form select {
+.input-icon {
+    background: #e5e7eb;
     padding: 10px 12px;
-    margin-bottom: 16px;
-    border-radius: 8px;
     border: 1px solid #d1d5db;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-group input,
+.input-group textarea {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 0 8px 8px 0;
     font-size: 13px;
     outline: none;
-    transition: all 0.15s ease;
+    background-color: #fffef8;
 }
 
-form input:focus, form textarea:focus, form select:focus {
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Fully rounded inputs for fields without icons */
+.input-rounded input,
+.input-rounded textarea {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+}
+
+.input-rounded input::placeholder,
+.input-rounded textarea::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Focus highlight */
+.input-group input:focus,
+.input-group textarea:focus,
+.input-rounded input:focus,
+.input-rounded textarea:focus {
     border-color: #9ca3af;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
-
-textarea { resize: vertical; min-height: 70px; }
 
 /* ZIP / CITY / STATE ROW */
 .zip-city-state {
@@ -224,11 +256,19 @@ input:required:valid { border-color: #34d399; }
                 
                 <!-- LEFT PAGE: Business Info -->
                 <div class="left-page" data-section="Business Info">
-                    <label for="business_name">Business Name *</label>
-                    <input type="text" id="business_name" name="business_name" required>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M4 22h16V2L4 2v20zm2-8h4v2H6v-2zm0-4h4v2H6v-2zm6 4h4v2h-4v-2zm0-4h4v2h-4v-2z"/></svg>
+                        </div>
+                        <input type="text" id="business_name" name="business_name" placeholder="Business Name *" required>
+                    </div>
 
-                    <label for="address">Address *</label>
-                    <input type="text" id="address" name="address" required>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M3 5v14h18V5H3zm16 12H5V7h14v10zm-7-8h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
+                        </div>
+                        <input type="text" id="address" name="address" placeholder="Address *" required>
+                    </div>
 
                     <div class="zip-city-state">
                         <input type="text" id="zip" name="zip" placeholder="Zip *" required>
@@ -236,32 +276,45 @@ input:required:valid { border-color: #34d399; }
                         <input type="text" id="state" name="state" placeholder="ST" disabled>
                     </div>
 
-                    <label for="phone">Main Phone</label>
-                    <input type="text" id="phone" name="phone">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M6 2v20h12V2H6zm10 18H8V4h8v16z"/></svg>
+                        </div>
+                        <input type="text" id="phone" name="phone" placeholder="Main Phone">
+                    </div>
 
-                    <label for="fax">Fax</label>
-                    <input type="text" id="fax" name="fax">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm2 2v10h14V7H5z"/></svg>
+                        </div>
+                        <input type="email" id="email" name="email" placeholder="Email">
+                    </div>
 
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email">
-
-                    <label for="hard_close">Hard Close Time</label>
-                    <input type="time" id="hard_close" name="hard_close">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-2h2zm0-4h-2V6h2z"/></svg>
+                        </div>
+                        <input type="time" id="hard_close" name="hard_close" placeholder="Hard Close Time">
+                    </div>
                 </div>
 
                 <!-- RIGHT PAGE: Contact Info -->
                 <div class="right-page" data-section="Primary Contact">
-                    <label for="contact_name">Default Contact Name *</label>
-                    <input type="text" id="contact_name" name="contact_name" required>
+                    <div class="input-rounded">
+                        <input type="text" id="contact_name" name="contact_name" placeholder="Default Contact Name *" required>
+                    </div>
 
-                    <label for="contact_phone">Contact Phone</label>
-                    <input type="text" id="contact_phone" name="contact_phone">
+                    <div class="input-rounded">
+                        <input type="text" id="contact_phone" name="contact_phone" placeholder="Contact Phone">
+                    </div>
 
-                    <label for="extension">Extension</label>
-                    <input type="text" id="extension" name="extension">
+                    <div class="input-rounded">
+                        <input type="text" id="extension" name="extension" placeholder="Extension">
+                    </div>
 
-                    <label for="notes">Notes</label>
-                    <textarea id="notes" name="notes"></textarea>
+                    <div class="input-rounded">
+                        <textarea id="notes" name="notes" placeholder="Notes"></textarea>
+                    </div>
 
                     <div class="form-buttons">
                         <button type="button" class="button-cancel">Cancel</button>
@@ -276,6 +329,5 @@ input:required:valid { border-color: #34d399; }
     </div>
 
 </div>
-
 </body>
 </html>
