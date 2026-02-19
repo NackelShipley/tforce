@@ -190,6 +190,72 @@ footer { text-align:center; font-size:12px; color:#9ca3af; margin-top:auto; padd
     #barcodeViewer, #barcodeViewer * { visibility:visible; }
     #barcodeViewer { position:absolute; left:0; top:0; width:100%; }
 }
+
+    /* Hide print container during normal use */
+#printContainer {
+  display: none;
+}
+
+/* PRINT MODE */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #printContainer,
+  #printContainer * {
+    visibility: visible;
+  }
+
+  #printContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .print-page {
+    width: 8.5in;
+    height: 11in;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0.6in;
+    padding: 0.6in;
+    box-sizing: border-box;
+    page-break-after: always;
+  }
+
+  .print-barcode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 14px;
+    background: white;
+    page-break-inside: avoid;
+  }
+
+  .print-barcode svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .print-tracking {
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .print-door {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #555;
+  }
+}
 </style>
 </head>
 
@@ -253,6 +319,8 @@ viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-
 <button onclick="stopScanner()">Close</button>
 </div>
 
+<div id="printContainer"></div>
+    
 <script>
 document.getElementById("year").textContent=new Date().getFullYear();
 
@@ -357,37 +425,95 @@ function nextBarcode(){ const items=document.querySelectorAll(".barcode-item"); 
 
 function clearAll(){ if(confirm("Clear all barcodes?")){ barcodeViewer.innerHTML=""; currentIndex=-1; updateViewer(); } }
 
-/* PRINT */
-function printBarcodes(){ expandedView=true; updateViewer(); window.print(); }
+/* BUILD PRINT & SHARE PAGES */
+    function buildPrintPages() {
+  const items = document.querySelectorAll(".barcode-item");
+  if (!items.length) {
+    alert("No barcodes available.");
+    return null;
+  }
 
-/* SHARE */
+  const container = document.getElementById("printContainer");
+  container.innerHTML = "";
+
+  const perPage = 8;
+
+  for (let i = 0; i < items.length; i += perPage) {
+    const page = document.createElement("div");
+    page.className = "print-page";
+
+    const slice = Array.from(items).slice(i, i + perPage);
+
+    slice.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "print-barcode";
+
+      const svgClone = item.querySelector("svg").cloneNode(true);
+      card.appendChild(svgClone);
+
+      const tracking = document.createElement("div");
+      tracking.className = "print-tracking";
+      tracking.textContent =
+        item.querySelector(".tracking-label")?.textContent || "";
+      card.appendChild(tracking);
+
+      const door = document.createElement("div");
+      door.className = "print-door";
+      door.textContent =
+        item.querySelector(".door-section span")?.textContent || "";
+      card.appendChild(door);
+
+      page.appendChild(card);
+    });
+
+    container.appendChild(page);
+  }
+
+  return container;
+}
+    
+/* PRINT & SHARE */
+function printBarcodes() {
+    const container = buildPrintPages();
+    if (!container) return;
+    window.print();
+}
+    
+    /* SHARE */
 async function shareBarcodes() {
-    const container = document.getElementById("barcodeViewer");
-    if (!container.children.length) return alert("No barcodes to share!");
+  const container = buildPrintPages();
+  if (!container) return;
 
-    // Expand all for the capture
-    container.classList.add("expanded");
+  container.style.display = "block";
 
-    try {
-        const canvas = await html2canvas(container, { scale: 2 });
-        const dataUrl = canvas.toDataURL("image/png");
-        const blob = await (await fetch(dataUrl)).blob();
-        const file = new File([blob], "DockBarcodes.png", { type: "image/png" });
+  const canvas = await html2canvas(container, {
+    scale: 3,
+    backgroundColor: "#ffffff"
+  });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: "Dock Barcodes" });
-        } else {
-            // fallback: open image in new tab
-            const win = window.open();
-            win.document.write(`<img src="${dataUrl}" style="width:100%">`);
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Sharing failed, please try again.");
-    } finally {
-        // restore pagination view if needed
-        if (!expandedView) container.classList.remove("expanded");
-    }
+  container.style.display = "none";
+
+  const blob = await new Promise(resolve =>
+    canvas.toBlob(resolve, "image/png")
+  );
+
+  const file = new File([blob], "DockBarcodes.png", {
+    type: "image/png"
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      files: [file],
+      title: "Dock Barcodes"
+    });
+  } else {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "DockBarcodes.png";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 /* ENTER KEY SUPPORT */
