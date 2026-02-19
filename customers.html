@@ -2,391 +2,252 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Customer Rolodex</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rolodex Binder Layout</title>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #eef1f4;
-  color: #111827;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #eef4ff, #e6f4ec);
+    display: flex;
 }
 
-/* ========================== */
-/* App Layout */
-/* ========================== */
-
-.app {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ========================== */
-/* LEFT DATABASE NAVIGATION */
-/* ========================== */
-
+/* ========== LEFT DATABASE NAVIGATION ========== */
 .sidebar {
-  width: 240px;
-  background: #111827;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 20px;
+    width: 240px;
+    background: #1f2937;
+    color: white;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
 }
 
 .sidebar h2 {
-  margin: 0 0 25px 0;
-  font-size: 1.1rem;
-  font-weight: 600;
+    margin-top: 0;
+    font-size: 20px;
+    letter-spacing: 1px;
 }
 
-.nav-item {
-  margin-bottom: 14px;
-  font-size: 0.95rem;
-  opacity: 0.85;
-  cursor: pointer;
-  transition: 0.2s ease;
+.sidebar a {
+    display: block;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 8px 0;
+    font-size: 14px;
 }
 
-.nav-item:hover {
-  opacity: 1;
+.sidebar a:hover {
+    color: white;
 }
 
-.nav-item.active {
-  font-weight: 600;
-  opacity: 1;
+/* ========== MAIN CONTENT ========== */
+.main-content {
+    flex: 1;
+    padding: 30px;
 }
 
-/* ========================== */
-/* RIGHT MAIN AREA */
-/* ========================== */
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* ========================== */
-/* Styled Header */
-/* ========================== */
-
+/* HEADER */
 .header {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #1f2937;
 }
 
-.header-title {
-  font-size: 1.2rem;
-  font-weight: 600;
+/* ========== BOOK CONTAINER ========== */
+.book-wrapper {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
-.search-box {
-  background: #f3f4f6;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-  border: 1px solid #e5e7eb;
-  outline: none;
+.book {
+    background: #fdfbf4;
+    border-radius: 8px;
+    padding: 35px 40px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    position: relative;
 }
 
-/* ========================== */
-/* Rolodex Book Layout */
-/* ========================== */
-
-.rolodex-layout {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 60px 1fr 60px;
-  overflow: hidden;
+/* CENTER CREASE */
+.book::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.03));
+    transform: translateX(-50%);
 }
 
-/* ========================== */
-/* Letter Tabs */
-/* ========================== */
-
-.letter-column {
-  background: #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 12px;
-  gap: 6px;
+/* ========== ALPHABET TABS ========== */
+.tabs-left, .tabs-right {
+    position: absolute;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.letter-tab {
-  width: 42px;
-  padding: 6px 0;
-  text-align: center;
-  font-size: 0.75rem;
-  border-radius: 6px 0 0 6px;
-  background: #d1d5db;
-  cursor: pointer;
-  transition: 0.2s ease;
+.tabs-left {
+    left: -35px;
 }
 
-.right .letter-tab {
-  border-radius: 0 6px 6px 0;
+.tabs-right {
+    right: -35px;
 }
 
-.letter-tab:hover {
-  background: #cbd5e1;
+.tab {
+    background: #e5e7eb;
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    width: 24px;
 }
 
-.letter-tab.active {
-  background: #3b82f6;
-  color: white;
-  font-weight: 600;
-  transform: translateX(5px);
+.tab:hover {
+    background: #d1d5db;
 }
 
-.right .letter-tab.active {
-  transform: translateX(-5px);
+/* ========== GRID LAYOUT ========== */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
-/* ========================== */
-/* Book Center (Paged Look) */
-/* ========================== */
-
-.book-center {
-  background: #ffffff;
-  padding: 30px 40px;
-  overflow-y: auto;
-  border-left: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
-  position: relative;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 30px;
-}
-
-/* Subtle center crease */
-.book-center::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.04),
-    rgba(0,0,0,0.08),
-    rgba(0,0,0,0.04)
-  );
-  pointer-events: none;
-}
-
-/* ========================== */
-/* Business Card (Reduced Height) */
-/* ========================== */
-
+/* ========== COMPACT BUSINESS CARDS ========== */
 .business-card {
-  background: #f9fafb;
-  border-radius: 10px;
-  padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  transition: 0.2s ease;
-  cursor: pointer;
-  min-height: 120px;
+    background: #fffef8;
+    border: 1px solid #e2dbc8;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.25;
+    cursor: pointer;
+    transition: all 0.15s ease;
 }
 
 .business-card:hover {
-  background: #ffffff;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    background: #fffbe6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
-.business-title {
-  font-weight: 600;
-  font-size: 0.95rem;
+.card-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed #e4ddc8;
+    padding-bottom: 3px;
 }
 
-.business-address {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 4px;
+.card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 2px;
 }
 
-.business-hours {
-  margin-top: 8px;
-  font-weight: 500;
-  font-size: 0.85rem;
+.label {
+    color: #8c8674;
+    font-weight: 500;
 }
 
-.hard-close {
-  margin-top: 4px;
-  font-weight: 600;
-  font-size: 0.8rem;
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 3px 6px;
-  border-radius: 5px;
-  display: inline-block;
+.value {
+    color: #2c2c2c;
+    max-width: 65%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
 }
 
-/* ========================== */
-/* Responsive */
-/* ========================== */
-
-@media (max-width: 1000px) {
-
-  .sidebar {
-    display: none;
-  }
-
-  .rolodex-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .letter-column {
-    display: none;
-  }
-
-  .book-center {
-    grid-template-columns: 1fr;
-  }
-
-  .book-center::before {
-    display: none;
-  }
-}
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
-  <!-- DATABASE NAVIGATION -->
-  <div class="sidebar">
+<!-- LEFT DATABASE NAVIGATION -->
+<div class="sidebar">
     <h2>Database</h2>
-    <div class="nav-item active">Customers</div>
-    <div class="nav-item">Contacts</div>
-    <div class="nav-item">Pickup History</div>
-    <div class="nav-item">Reports</div>
-    <div class="nav-item">Settings</div>
-  </div>
+    <a href="#">All Customers</a>
+    <a href="#">Add Customer</a>
+    <a href="#">Recent Activity</a>
+    <a href="#">Archived</a>
+    <a href="#">Settings</a>
+</div>
 
-  <!-- MAIN CONTENT -->
-  <div class="main">
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
-    <!-- HEADER -->
     <div class="header">
-      <div class="header-title">Customer Rolodex</div>
-      <input class="search-box" placeholder="Search customers..." />
+        Customer Rolodex
     </div>
 
-    <!-- BOOK -->
-    <div class="rolodex-layout">
+    <div class="book-wrapper">
 
-      <!-- Left Letters A–M -->
-      <div class="letter-column left">
-        <div class="letter-tab active">A</div>
-        <div class="letter-tab">B</div>
-        <div class="letter-tab">C</div>
-        <div class="letter-tab">D</div>
-        <div class="letter-tab">E</div>
-        <div class="letter-tab">F</div>
-        <div class="letter-tab">G</div>
-        <div class="letter-tab">H</div>
-        <div class="letter-tab">I</div>
-        <div class="letter-tab">J</div>
-        <div class="letter-tab">K</div>
-        <div class="letter-tab">L</div>
-        <div class="letter-tab">M</div>
-      </div>
-
-      <!-- Center Book Content -->
-      <div class="book-center">
-
-        <div class="business-card">
-          <div class="business-title">Acme Distribution</div>
-          <div class="business-address">
-            1234 Industrial Blvd<br>
-            Phoenix, AZ 85009
-          </div>
-          <div class="business-hours">
-            🕒 7:00 AM – 4:30 PM
-          </div>
-          <div class="hard-close">
-            HARD CLOSE 3:30 PM
-          </div>
+        <!-- Alphabet Tabs -->
+        <div class="tabs-left">
+            <div class="tab">A</div>
+            <div class="tab">B</div>
+            <div class="tab">C</div>
+            <div class="tab">D</div>
         </div>
 
-        <div class="business-card">
-          <div class="business-title">Atlas Freight</div>
-          <div class="business-address">
-            900 Dock Rd<br>
-            Mesa, AZ 85201
-          </div>
-          <div class="business-hours">
-            🕒 6:00 AM – 3:00 PM
-          </div>
-          <div class="hard-close">
-            HARD CLOSE 2:30 PM
-          </div>
+        <div class="tabs-right">
+            <div class="tab">W</div>
+            <div class="tab">X</div>
+            <div class="tab">Y</div>
+            <div class="tab">Z</div>
         </div>
 
-        <div class="business-card">
-          <div class="business-title">Arrow Logistics</div>
-          <div class="business-address">
-            77 Supply Way<br>
-            Tempe, AZ 85282
-          </div>
-          <div class="business-hours">
-            🕒 8:00 AM – 5:00 PM
-          </div>
-          <div class="hard-close">
-            HARD CLOSE 4:30 PM
-          </div>
+        <!-- BOOK -->
+        <div class="book">
+
+            <div class="book-grid">
+
+                <!-- Example Business Cards -->
+                <div class="business-card">
+                    <div class="card-name">John Smith</div>
+                    <div class="card-row">
+                        <span class="label">Company</span>
+                        <span class="value">Safarizone Logistics</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="label">Phone</span>
+                        <span class="value">(555) 123-4567</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="label">Email</span>
+                        <span class="value">john@safarizone.com</span>
+                    </div>
+                </div>
+
+                <div class="business-card">
+                    <div class="card-name">Emily Carter</div>
+                    <div class="card-row">
+                        <span class="label">Company</span>
+                        <span class="value">Carter Freight Co.</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="label">Phone</span>
+                        <span class="value">(555) 987-6543</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="label">Email</span>
+                        <span class="value">emily@carterfreight.com</span>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-
-        <div class="business-card">
-          <div class="business-title">Apex Manufacturing</div>
-          <div class="business-address">
-            400 Industry Dr<br>
-            Chandler, AZ 85225
-          </div>
-          <div class="business-hours">
-            🕒 6:30 AM – 3:30 PM
-          </div>
-          <div class="hard-close">
-            HARD CLOSE 3:00 PM
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Right Letters N–Z -->
-      <div class="letter-column right">
-        <div class="letter-tab">N</div>
-        <div class="letter-tab">O</div>
-        <div class="letter-tab">P</div>
-        <div class="letter-tab">Q</div>
-        <div class="letter-tab">R</div>
-        <div class="letter-tab">S</div>
-        <div class="letter-tab">T</div>
-        <div class="letter-tab">U</div>
-        <div class="letter-tab">V</div>
-        <div class="letter-tab">W</div>
-        <div class="letter-tab">X</div>
-        <div class="letter-tab">Y</div>
-        <div class="letter-tab">Z</div>
-      </div>
-
     </div>
-
-  </div>
 
 </div>
 
