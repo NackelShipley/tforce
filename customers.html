@@ -3,41 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customer Database – Prototype V2</title>
+<title>Customer Database</title>
 
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
-body { background: #f4f6f8; color: #2c2f33; overflow: hidden; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Inter", "Segoe UI", sans-serif; }
+body { background: #eef1f4; color: #1f2933; }
 
-/* Layout */
-#app { display: flex; height: 100vh; }
+/* =============================
+   APP LAYOUT
+============================= */
+
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
-  background: #1f2933;
-  color: #fff;
-  padding-top: 25px;
+  width: 240px;
+  background: #1e2933;
+  color: #cbd5e1;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
+  transition: transform .3s ease;
 }
+
 .sidebar h2 {
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 20px;
+  font-size: 1rem;
   font-weight: 500;
-  font-size: 1.1rem;
-  opacity: .8;
+  opacity: .7;
 }
+
 .sidebar button {
-  padding: 14px 20px;
   background: none;
   border: none;
-  color: #cbd5e1;
+  color: inherit;
   text-align: left;
+  padding: 14px 20px;
   cursor: pointer;
   font-size: .95rem;
-  transition: all .2s ease;
   border-left: 4px solid transparent;
+  transition: all .2s ease;
 }
+
 .sidebar button:hover,
 .sidebar button.active {
   background: #2a3642;
@@ -45,94 +56,152 @@ body { background: #f4f6f8; color: #2c2f33; overflow: hidden; }
   color: #fff;
 }
 
-/* Main */
-.main {
-  flex: 1;
-  padding: 25px;
-  overflow-y: auto;
+/* Top Bar */
+.topbar {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
-/* Search */
-.search-bar {
-  margin-bottom: 15px;
+.topbar h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
 }
-.search-bar input {
+
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* Main Content */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* =============================
+   SEARCH + ALPHABET BAR
+============================= */
+
+.control-bar {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  margin-bottom: 20px;
+}
+
+.search-input {
   width: 100%;
-  padding: 12px 15px;
+  padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: .95rem;
+  margin-bottom: 12px;
 }
 
-/* Alphabet */
 .alphabet {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  gap: 5px;
 }
+
 .alphabet button {
-  margin: 3px;
-  padding: 6px 9px;
-  border-radius: 5px;
   border: none;
+  padding: 5px 8px;
+  font-size: .8rem;
+  border-radius: 5px;
   background: #e5e7eb;
   cursor: pointer;
-  font-size: .8rem;
-  transition: background .2s;
+  transition: .2s ease;
 }
+
 .alphabet button.active {
   background: #3b82f6;
   color: #fff;
 }
-.alphabet button:hover {
-  background: #cbd5e1;
-}
 
-/* Rolodex Cards */
+/* =============================
+   BUSINESS GRID
+============================= */
+
 .business-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 15px;
 }
+
 .business-card {
   background: #fff;
-  width: 220px;
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition: .15s ease;
 }
+
 .business-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 12px rgba(0,0,0,.12);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,.08);
 }
+
 .business-card h3 {
-  font-size: 1rem;
+  font-size: .95rem;
   margin-bottom: 5px;
 }
+
 .business-card p {
-  font-size: .85rem;
+  font-size: .8rem;
   color: #6b7280;
 }
 
-/* Slide Panel */
-.panel-overlay {
+/* =============================
+   SLIDE PANEL
+============================= */
+
+.overlay-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;
+}
+
+.overlay-dim.active {
+  display: block;
+}
+
+.slide-panel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 45%;
+  width: 50%;
   height: 100%;
-  background: #ffffff;
+  background: #fff;
   box-shadow: -4px 0 15px rgba(0,0,0,.15);
   transform: translateX(100%);
   transition: transform .3s ease;
   display: flex;
   flex-direction: column;
 }
-.panel-overlay.active {
+
+.slide-panel.active {
   transform: translateX(0);
 }
+
 .panel-header {
   padding: 20px;
   border-bottom: 1px solid #e5e7eb;
@@ -140,193 +209,155 @@ body { background: #f4f6f8; color: #2c2f33; overflow: hidden; }
   justify-content: space-between;
   align-items: center;
 }
-.panel-header h2 {
-  font-weight: 600;
-}
+
 .panel-body {
   padding: 20px;
   overflow-y: auto;
   flex: 1;
 }
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-}
 
-/* Contact Cards */
+/* =============================
+   CONTACT CARDS
+============================= */
+
 .contact-card {
   background: #f9fafb;
-  border-radius: 8px;
   padding: 15px;
+  border-radius: 8px;
   margin-bottom: 15px;
-  border-left: 4px solid transparent;
+  border-left: 4px solid #e5e7eb;
 }
-.contact-card.priority-1 { border-left-color: #16a34a; }
-.contact-card.priority-2 { border-left-color: #f59e0b; }
-.contact-card.priority-3 { border-left-color: #ef4444; }
+
+.contact-card.primary {
+  border-left-color: #16a34a;
+}
 
 .contact-card h4 {
+  font-size: .9rem;
   margin-bottom: 5px;
-  font-size: .95rem;
 }
+
 .contact-card p {
-  font-size: .85rem;
+  font-size: .8rem;
   margin-bottom: 4px;
   color: #4b5563;
 }
 
-.priority-badge {
-  font-size: .7rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: #e5e7eb;
-  margin-left: 8px;
+/* =============================
+   RESPONSIVE
+============================= */
+
+@media (max-width: 1024px) {
+  .slide-panel {
+    width: 65%;
+  }
 }
 
-/* Dim background when panel open */
-.dim {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.35);
-  display: none;
-}
-.dim.active {
-  display: block;
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    transform: translateX(-100%);
+    z-index: 10;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .slide-panel {
+    width: 100%;
+  }
 }
 </style>
 </head>
 <body>
 
-<div id="app">
-  <div class="sidebar">
+<div class="app">
+  <div class="sidebar" id="sidebar">
     <h2>Customer Suite</h2>
     <button class="active">Rolodex</button>
     <button>Add Customer</button>
   </div>
 
-  <div class="main">
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search business name...">
+  <div class="content-wrapper">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <h1>Customer Rolodex</h1>
+      <div>Supervisor Access</div>
     </div>
 
-    <div class="alphabet" id="alphabetNav"></div>
+    <div class="main-content">
+      <div class="control-bar">
+        <input class="search-input" placeholder="Search business name...">
+        <div class="alphabet">
+          <button>A</button><button>B</button><button>C</button>
+          <button>D</button><button>E</button><button>F</button>
+          <button>G</button><button>H</button><button>I</button>
+          <button>J</button><button>K</button><button>L</button>
+          <button>M</button><button>N</button><button>O</button>
+          <button>P</button><button>Q</button><button>R</button>
+          <button>S</button><button>T</button><button>U</button>
+          <button>V</button><button>W</button><button>X</button>
+          <button>Y</button><button>Z</button>
+        </div>
+      </div>
 
-    <div class="business-grid" id="businessGrid"></div>
+      <div class="business-grid">
+        <div class="business-card" onclick="openPanel()">
+          <h3>Acme Logistics</h3>
+          <p>Primary: Jane Doe</p>
+        </div>
+
+        <div class="business-card" onclick="openPanel()">
+          <h3>Metro Transport</h3>
+          <p>Primary: Chris Allen</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="dim" id="dimLayer" onclick="closePanel()"></div>
+<div class="overlay-dim" id="dim" onclick="closePanel()"></div>
 
-<div class="panel-overlay" id="detailPanel">
+<div class="slide-panel" id="panel">
   <div class="panel-header">
-    <h2 id="panelBusinessName">Business Name</h2>
-    <button class="close-btn" onclick="closePanel()">×</button>
+    <h2>Acme Logistics</h2>
+    <button onclick="closePanel()">×</button>
   </div>
-  <div class="panel-body" id="panelContacts"></div>
+  <div class="panel-body">
+    <div class="contact-card primary">
+      <h4>Jane Doe</h4>
+      <p>Shipping Manager</p>
+      <p>555-1234</p>
+      <p>jane@acme.com</p>
+    </div>
+
+    <div class="contact-card">
+      <h4>Mark Hill</h4>
+      <p>Assistant Manager</p>
+      <p>555-5678</p>
+      <p>mark@acme.com</p>
+    </div>
+  </div>
 </div>
 
 <script>
-const businesses = [
-  {
-    name: "Acme Logistics",
-    contacts: [
-      { name: "Jane Doe", title: "Shipping Manager", phone: "555-1234", email: "jane@acme.com", priority: 1 },
-      { name: "Mark Hill", title: "Assistant Manager", phone: "555-5678", email: "mark@acme.com", priority: 2 }
-    ]
-  },
-  {
-    name: "Beta Freight",
-    contacts: [
-      { name: "Lisa Smith", title: "Operations Lead", phone: "555-2222", email: "lisa@beta.com", priority: 1 }
-    ]
-  },
-  {
-    name: "Metro Transport",
-    contacts: [
-      { name: "Chris Allen", title: "Dispatcher", phone: "555-8888", email: "chris@metro.com", priority: 2 }
-    ]
-  }
-];
-
-const grid = document.getElementById("businessGrid");
-const searchInput = document.getElementById("searchInput");
-const alphabetNav = document.getElementById("alphabetNav");
-
-function renderAlphabet() {
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
-    const btn = document.createElement("button");
-    btn.textContent = letter;
-    btn.onclick = () => filterByLetter(letter, btn);
-    alphabetNav.appendChild(btn);
-  });
+function openPanel(){
+  document.getElementById("panel").classList.add("active");
+  document.getElementById("dim").classList.add("active");
 }
-
-function renderBusinesses(list) {
-  grid.innerHTML = "";
-  list.forEach(biz => {
-    const card = document.createElement("div");
-    card.className = "business-card";
-    card.innerHTML = `
-      <h3>${biz.name}</h3>
-      <p>Primary: ${getPrimaryContact(biz)}</p>
-    `;
-    card.onclick = () => openPanel(biz);
-    grid.appendChild(card);
-  });
+function closePanel(){
+  document.getElementById("panel").classList.remove("active");
+  document.getElementById("dim").classList.remove("active");
 }
-
-function getPrimaryContact(biz) {
-  const sorted = biz.contacts.sort((a,b)=>a.priority-b.priority);
-  return sorted.length ? sorted[0].name : "—";
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("active");
 }
-
-function filterByLetter(letter, btn) {
-  document.querySelectorAll(".alphabet button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  const filtered = businesses.filter(b=>b.name.startsWith(letter));
-  renderBusinesses(filtered);
-}
-
-searchInput.addEventListener("input", () => {
-  const value = searchInput.value.toLowerCase();
-  const filtered = businesses.filter(b=>b.name.toLowerCase().includes(value));
-  renderBusinesses(filtered);
-});
-
-function openPanel(biz) {
-  document.getElementById("panelBusinessName").textContent = biz.name;
-  const container = document.getElementById("panelContacts");
-  container.innerHTML = "";
-
-  biz.contacts
-    .sort((a,b)=>a.priority-b.priority)
-    .forEach(contact => {
-      const div = document.createElement("div");
-      div.className = `contact-card priority-${contact.priority}`;
-      div.innerHTML = `
-        <h4>${contact.name}
-          <span class="priority-badge">Priority ${contact.priority}</span>
-        </h4>
-        <p>${contact.title}</p>
-        <p>${contact.phone}</p>
-        <p>${contact.email}</p>
-      `;
-      container.appendChild(div);
-    });
-
-  document.getElementById("detailPanel").classList.add("active");
-  document.getElementById("dimLayer").classList.add("active");
-}
-
-function closePanel() {
-  document.getElementById("detailPanel").classList.remove("active");
-  document.getElementById("dimLayer").classList.remove("active");
-}
-
-renderAlphabet();
-renderBusinesses(businesses);
 </script>
 
 </body>
