@@ -184,72 +184,46 @@ footer { text-align:center; font-size:12px; color:#9ca3af; margin-top:auto; padd
 .scan-caption { margin-top:14px; color:white; font-size:14px; }
 #scannerModal button { margin-top:10px; padding:8px 14px; border:none; border-radius:8px; background:#dc2626; color:white; cursor:pointer; }
 
-/* ============================= */
-/* PRINT + SHARE LAYOUT SYSTEM  */
-/* ============================= */
-
+/* PRINT & SHARE */
 #printContainer {
-    display: absolute;
-    top: -9999x;
-    left: -9999x;
+  display: none;
 }
 
-/* Page layout for 8.5x11 */
 .print-page {
-    width: 8.5in;
-    height: 11in;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 0.65in;              /* spacing for cutting */
-    padding: 0.65in;          /* outer margin */
-    box-sizing: border-box;
-    background: white;
+  width: 100%;
+  height: 11in; /* standard letter */
+  page-break-after: always;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 0.5in;
+  padding: 0.5in;
+  box-sizing: border-box;
 }
 
-/* Individual barcode card */
 .print-barcode {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 16px;
-    background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #ccc; /* optional cutting guide */
+  padding: 0.25in;
 }
 
 .print-barcode svg {
-    width: 100%;
-    height: auto;
+  width: 90%;
+  height: auto;
 }
 
 .print-tracking {
-    margin-top: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
+  margin-top: 6px;
+  font-weight: 600;
 }
 
 .print-door {
-    margin-top: 4px;
-    font-size: 13px;
-    color: #6b7280;
-}
-
-/* Print isolation */
-@media print {
-    body > *:not(#printContainer) {
-        display: none !important;
-    }
-
-    #printContainer {
-        display: block;
-    }
-
-    .print-page {
-        page-break-after: always;
-    }
+  font-size: 0.9em;
+  color: #6b7280;
+  margin-top: 2px;
 }
 </style>
 </head>
@@ -477,8 +451,9 @@ function buildPrintPages() {
 
   const container = document.getElementById("printContainer");
   container.innerHTML = "";
+  container.style.display = "block"; // make visible for rendering
 
-  const perPage = 8;
+  const perPage = 8; // 2x4 grid
 
   for (let i = 0; i < items.length; i += perPage) {
     const page = document.createElement("div");
@@ -490,29 +465,20 @@ function buildPrintPages() {
       const card = document.createElement("div");
       card.className = "print-barcode";
 
-      // Clone ONLY the barcode SVG
-      const barcodeSvg = item.querySelector("svg");
-      if (barcodeSvg) {
-        card.appendChild(barcodeSvg.cloneNode(true));
-      }
+      // clone the SVG barcode
+      const svg = item.querySelector("svg");
+      if (svg) card.appendChild(svg.cloneNode(true));
 
-      // Tracking number
+      // tracking number
       const tracking = document.createElement("div");
       tracking.className = "print-tracking";
-      tracking.textContent =
-        item.querySelector(".tracking-label")?.textContent || "";
+      tracking.textContent = item.querySelector(".tracking-label")?.textContent || "";
       card.appendChild(tracking);
 
-      // Door assignment (handles select OR span structure)
+      // door assignment
       const door = document.createElement("div");
       door.className = "print-door";
-
-      const doorDropdown = item.querySelector("select");
-      const doorSpan = item.querySelector(".door-section span");
-
-      door.textContent =
-        doorDropdown?.value || doorSpan?.textContent || "";
-
+      door.textContent = item.querySelector(".door-section span")?.textContent || "";
       card.appendChild(door);
 
       page.appendChild(card);
@@ -523,43 +489,32 @@ function buildPrintPages() {
 
   return container;
 }
-    
-/* PRINT */
-function printBarcodes() {
-    const container = buildPrintPages();
-    if (!container) return;
 
-    window.print();
+function printBarcodes() {
+  const container = buildPrintPages();
+  if (!container) return;
+  window.print();
+  container.style.display = "none"; // hide after print
 }
 
-/* SHARE */
 async function shareBarcodes() {
   const container = buildPrintPages();
   if (!container) return;
 
+  // allow layout to render
+  await new Promise(r => requestAnimationFrame(r));
 
-  // Allow layout to render
-await new Promise(resolve => setTimeout(resolve, 100));
-    
   const canvas = await html2canvas(container, {
     scale: 3,
     backgroundColor: "#ffffff"
   });
 
+  const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
 
-  const blob = await new Promise(resolve =>
-    canvas.toBlob(resolve, "image/png")
-  );
-
-  const file = new File([blob], "DockBarcodes.png", {
-    type: "image/png"
-  });
+  const file = new File([blob], "DockBarcodes.png", { type: "image/png" });
 
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    await navigator.share({
-      files: [file],
-      title: "Dock Barcodes"
-    });
+    await navigator.share({ files: [file], title: "Dock Barcodes" });
   } else {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -568,6 +523,8 @@ await new Promise(resolve => setTimeout(resolve, 100));
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  container.style.display = "none"; // hide after sharing
 }
 
 /* ENTER KEY SUPPORT */
