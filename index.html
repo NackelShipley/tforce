@@ -184,11 +184,70 @@ footer { text-align:center; font-size:12px; color:#9ca3af; margin-top:auto; padd
 .scan-caption { margin-top:14px; color:white; font-size:14px; }
 #scannerModal button { margin-top:10px; padding:8px 14px; border:none; border-radius:8px; background:#dc2626; color:white; cursor:pointer; }
 
-/* PRINT */
+/* ============================= */
+/* PRINT + SHARE LAYOUT SYSTEM  */
+/* ============================= */
+
+#printContainer {
+    display: none;
+}
+
+/* Page layout for 8.5x11 */
+.print-page {
+    width: 8.5in;
+    height: 11in;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0.65in;              /* spacing for cutting */
+    padding: 0.65in;          /* outer margin */
+    box-sizing: border-box;
+    background: white;
+}
+
+/* Individual barcode card */
+.print-barcode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
+}
+
+.print-barcode svg {
+    width: 100%;
+    height: auto;
+}
+
+.print-tracking {
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+}
+
+.print-door {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Print isolation */
 @media print {
-    body * { visibility:hidden; }
-    #barcodeViewer, #barcodeViewer * { visibility:visible; }
-    #barcodeViewer { position:absolute; left:0; top:0; width:100%; }
+    body > *:not(#printContainer) {
+        display: none !important;
+    }
+
+    #printContainer {
+        display: block;
+    }
+
+    .print-page {
+        page-break-after: always;
+    }
 }
 </style>
 </head>
