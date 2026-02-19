@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Add Customer - Ledger Style</title>
+<title>Add Customer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 * { box-sizing: border-box; }
 
@@ -15,7 +16,7 @@ body {
     height: 100vh;
 }
 
-/* Sidebar */
+/* ========== LEFT DATABASE NAVIGATION ========== */
 .sidebar {
     width: 240px;
     background: #1f2937;
@@ -23,11 +24,20 @@ body {
     padding: 25px 20px;
     min-height: 100vh;
 }
+
 .sidebar h2 { margin-top: 0; font-size: 20px; }
-.sidebar a { display: block; color: #d1d5db; text-decoration: none; padding: 8px 0; font-size: 14px; }
+
+.sidebar a {
+    display: block;
+    color: #d1d5db;
+    text-decoration: none;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
 .sidebar a:hover { color: white; }
 
-/* Main Content */
+/* ========== MAIN CONTENT ========== */
 .main-content {
     flex: 1;
     padding: 30px;
@@ -35,31 +45,34 @@ body {
     flex-direction: column;
     margin: 10px;
 }
-.header { font-size: 28px; font-weight: 600; margin-bottom: 20px; color: #1f2937; }
 
-/* Form wrapper / Book */
+.header {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-left: -20px;
+    color: #1f2937;
+}
+
+/* ========== BOOK WRAPPER ========== */
 .book-wrapper {
     position: relative;
     flex: 1;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
 }
 
 .book {
     background: #fdfbf4;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 30px 40px;
-    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    position: relative;
     width: 100%;
-    max-width: 900px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    position: relative;
 }
 
-/* Center crease for "paged" look */
+/* CENTER CREASE */
 .book::before {
     content: "";
     position: absolute;
@@ -71,70 +84,61 @@ body {
     transform: translateX(-50%);
 }
 
-/* Section headers */
-.section-header {
-    font-size: 14px;
+/* ========== FORM GRID ========== */
+.add-customer-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* ========== PAGE CARDS ========== */
+.left-page, .right-page {
+    background: #f9f9f4;
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section Header */
+.left-page::before, .right-page::before {
+    content: attr(data-section);
     font-weight: 600;
+    font-size: 14px;
     color: #6b7280;
     margin-bottom: 12px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 6px;
 }
 
-/* Input group with icon */
-.input-group {
-    display: flex;
-    align-items: center;
+/* ========== FORM ELEMENTS ========== */
+form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #1f2937;
+    font-size: 13px;
+}
+
+form input, form textarea, form select {
+    padding: 10px 12px;
     margin-bottom: 16px;
-}
-
-.input-icon {
-    background: #e5e7eb;
-    padding: 10px 12px;
+    border-radius: 8px;
     border: 1px solid #d1d5db;
-    border-right: none;
-    border-radius: 8px 0 0 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.input-group input,
-.input-group textarea {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 0 8px 8px 0;
     font-size: 13px;
     outline: none;
     transition: all 0.15s ease;
-    background-color: #fffef8;
 }
 
-/* Fully rounded inputs for fields without icons */
-.input-rounded input,
-.input-rounded textarea {
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-}
-
-/* Placeholder labels inside inputs */
-::placeholder { color: #9ca3af; font-weight: 500; }
-
-/* Input focus */
-.input-group input:focus,
-.input-group textarea:focus,
-.input-rounded input:focus,
-.input-rounded textarea:focus {
+form input:focus, form textarea:focus, form select:focus {
     border-color: #9ca3af;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Required field highlight */
-input:required:invalid { border-color: #f87171; }
-input:required:valid { border-color: #34d399; }
+textarea { resize: vertical; min-height: 70px; }
 
-/* ZIP / CITY / STATE group */
+/* ZIP / CITY / STATE ROW */
 .zip-city-state {
     display: flex;
     gap: 10px;
@@ -145,16 +149,20 @@ input:required:valid { border-color: #34d399; }
     margin-bottom: 0;
 }
 
-#zip { width: 100px; }
+#zip { width: 80px; }
 #city { flex: 1; background-color: #e5e7eb; cursor: not-allowed; }
 #state { width: 50px; background-color: #e5e7eb; cursor: not-allowed; }
 
-/* Buttons */
+/* Highlight required fields */
+input:required:invalid { border-color: #f87171; }
+input:required:valid { border-color: #34d399; }
+
+/* ========== SAVE/CANCEL BUTTONS ========== */
 .form-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 10px;
+    margin-top: auto;
 }
 
 .button-save {
@@ -184,13 +192,15 @@ input:required:valid { border-color: #34d399; }
 
 .button-cancel:hover { background-color: #e5e7eb; }
 
-/* Responsive */
+/* Responsive tweaks */
 @media (max-width: 900px) {
+    .add-customer-form { grid-template-columns: 1fr; gap: 20px; }
     .zip-city-state { flex-direction: column; }
     #zip, #city, #state { width: 100%; cursor: auto; background-color: white; }
 }
 </style>
 </head>
+
 <body>
 
 <div class="sidebar">
@@ -210,69 +220,53 @@ input:required:valid { border-color: #34d399; }
 
         <div class="book">
 
-            <form method="POST" action="save_customer.php">
+            <form class="add-customer-form" method="POST" action="save_customer.php">
+                
+                <!-- LEFT PAGE: Business Info -->
+                <div class="left-page" data-section="Business Info">
+                    <label for="business_name">Business Name *</label>
+                    <input type="text" id="business_name" name="business_name" required>
 
-                <div class="section-header">Business Info</div>
+                    <label for="address">Address *</label>
+                    <input type="text" id="address" name="address" required>
 
-                <div class="input-group">
-                    <div class="input-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M4 22h16V2L4 2v20zm2-8h4v2H6v-2zm0-4h4v2H6v-2zm6 4h4v2h-4v-2zm0-4h4v2h-4v-2z"/></svg>
+                    <div class="zip-city-state">
+                        <input type="text" id="zip" name="zip" placeholder="Zip *" required>
+                        <input type="text" id="city" name="city" placeholder="City" disabled>
+                        <input type="text" id="state" name="state" placeholder="ST" disabled>
                     </div>
-                    <input type="text" name="business_name" placeholder="Business Name *" required>
+
+                    <label for="phone">Main Phone</label>
+                    <input type="text" id="phone" name="phone">
+
+                    <label for="fax">Fax</label>
+                    <input type="text" id="fax" name="fax">
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+
+                    <label for="hard_close">Hard Close Time</label>
+                    <input type="time" id="hard_close" name="hard_close">
                 </div>
 
-                <div class="input-group">
-                    <div class="input-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M3 5v14h18V5H3zm16 12H5V7h14v10zm-7-8h2v2h-2V9zm0 4h2v2h-2v-2z"/></svg>
+                <!-- RIGHT PAGE: Contact Info -->
+                <div class="right-page" data-section="Primary Contact">
+                    <label for="contact_name">Default Contact Name *</label>
+                    <input type="text" id="contact_name" name="contact_name" required>
+
+                    <label for="contact_phone">Contact Phone</label>
+                    <input type="text" id="contact_phone" name="contact_phone">
+
+                    <label for="extension">Extension</label>
+                    <input type="text" id="extension" name="extension">
+
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes"></textarea>
+
+                    <div class="form-buttons">
+                        <button type="button" class="button-cancel">Cancel</button>
+                        <button type="submit" class="button-save">Save Customer</button>
                     </div>
-                    <input type="text" name="address" placeholder="Address *" required>
-                </div>
-
-                <div class="zip-city-state">
-                    <input type="text" id="zip" name="zip" placeholder="ZIP *" required>
-                    <input type="text" id="city" name="city" placeholder="City" disabled>
-                    <input type="text" id="state" name="state" placeholder="ST" disabled>
-                </div>
-
-                <div class="input-group">
-                    <div class="input-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M6 2v20h12V2H6zm10 18H8V4h8v16z"/></svg>
-                    </div>
-                    <input type="text" name="phone" placeholder="Main Phone">
-                </div>
-
-                <div class="input-group">
-                    <div class="input-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7280" viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm2 2v10h14V7H5z"/></svg>
-                    </div>
-                    <input type="email" name="email" placeholder="Email">
-                </div>
-
-                <div class="input-rounded">
-                    <input type="time" name="hard_close" placeholder="Hard Close Time">
-                </div>
-
-                <div class="section-header">Primary Contact</div>
-
-                <div class="input-rounded">
-                    <input type="text" name="contact_name" placeholder="Default Contact Name *" required>
-                </div>
-
-                <div class="input-rounded">
-                    <input type="text" name="contact_phone" placeholder="Contact Phone">
-                </div>
-
-                <div class="input-rounded">
-                    <input type="text" name="extension" placeholder="Extension">
-                </div>
-
-                <div class="input-rounded">
-                    <textarea name="notes" placeholder="Notes"></textarea>
-                </div>
-
-                <div class="form-buttons">
-                    <button type="button" class="button-cancel">Cancel</button>
-                    <button type="submit" class="button-save">Save Customer</button>
                 </div>
 
             </form>
@@ -282,5 +276,6 @@ input:required:valid { border-color: #34d399; }
     </div>
 
 </div>
+
 </body>
 </html>
