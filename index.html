@@ -442,74 +442,102 @@ function nextBarcode(){ const items=document.querySelectorAll(".barcode-item"); 
 
 function clearAll(){ if(confirm("Clear all barcodes?")){ barcodeViewer.innerHTML=""; currentIndex=-1; updateViewer(); } }
 
-function buildPrintPages() {
+// Helper: build the full HTML for printing/sharing
+function buildBarcodeHTML() {
   const items = document.querySelectorAll(".barcode-item");
   if (!items.length) {
     alert("No barcodes available.");
     return null;
   }
 
-  const container = document.getElementById("printContainer");
-  container.innerHTML = "";
-  container.style.display = "block"; // make visible for rendering
+  let html = `
+  <html>
+    <head>
+      <title>Dock Barcodes</title>
+      <style>
+        body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+        .print-page {
+          width:100%;
+          height:11in;
+          display:grid;
+          grid-template-columns:repeat(2,1fr);
+          grid-template-rows:repeat(4,1fr);
+          gap:0.5in;
+          padding:0.5in;
+          box-sizing:border-box;
+        }
+        .print-barcode {
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:center;
+          border:1px dashed #ccc;
+          padding:0.25in;
+        }
+        .print-barcode svg {
+          width:90%;
+          height:auto;
+        }
+        .print-tracking { margin-top:6px; font-weight:600; }
+        .print-door { margin-top:2px; font-size:0.9em; color:#6b7280; }
+        @media print { body { -webkit-print-color-adjust: exact; } }
+      </style>
+    </head>
+    <body>
+  `;
 
-  const perPage = 8; // 2x4 grid
-
+  const perPage = 8;
   for (let i = 0; i < items.length; i += perPage) {
-    const page = document.createElement("div");
-    page.className = "print-page";
+    html += `<div class="print-page">`;
+    Array.from(items).slice(i, i + perPage).forEach(item => {
+      const code = item.querySelector(".tracking-label")?.textContent || "";
+      const door = item.querySelector(".door-section span")?.textContent || "";
+      const svgOuter = item.querySelector("svg")?.outerHTML || "";
 
-    const slice = Array.from(items).slice(i, i + perPage);
-
-    slice.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "print-barcode";
-
-      // clone the SVG barcode
-      const svg = item.querySelector("svg");
-      if (svg) card.appendChild(svg.cloneNode(true));
-
-      // tracking number
-      const tracking = document.createElement("div");
-      tracking.className = "print-tracking";
-      tracking.textContent = item.querySelector(".tracking-label")?.textContent || "";
-      card.appendChild(tracking);
-
-      // door assignment
-      const door = document.createElement("div");
-      door.className = "print-door";
-      door.textContent = item.querySelector(".door-section span")?.textContent || "";
-      card.appendChild(door);
-
-      page.appendChild(card);
+      html += `<div class="print-barcode">
+        ${svgOuter}
+        <div class="print-tracking">${code}</div>
+        <div class="print-door">${door}</div>
+      </div>`;
     });
-
-    container.appendChild(page);
+    html += `</div>`;
   }
 
-  return container;
+  html += `</body></html>`;
+  return html;
 }
 
+// PRINT FUNCTION
 function printBarcodes() {
-  const container = buildPrintPages();
-  if (!container) return;
-  window.print();
-  container.style.display = "none"; // hide after print
+  const html = buildBarcodeHTML();
+  if (!html) return;
+
+  const w = window.open("", "_blank");
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  w.print();
+  // Optional: w.close();
 }
 
+// SHARE FUNCTION (PNG)
 async function shareBarcodes() {
-  const container = buildPrintPages();
-  if (!container) return;
+  const html = buildBarcodeHTML();
+  if (!html) return;
 
-  // allow layout to render
-  await new Promise(r => requestAnimationFrame(r));
+  const w = window.open("", "_blank");
+  w.document.write(html);
+  w.document.close();
+  w.focus();
 
-  const canvas = await html2canvas(container, {
-    scale: 3,
-    backgroundColor: "#ffffff"
-  });
+  // Wait a tick for rendering
+  await new Promise(r => setTimeout(r, 100));
 
-  const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+  const container = w.document.body;
+  const canvas = await html2canvas(container, { scale: 3, backgroundColor: "#ffffff" });
+
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  w.close();
 
   const file = new File([blob], "DockBarcodes.png", { type: "image/png" });
 
@@ -523,8 +551,6 @@ async function shareBarcodes() {
     a.click();
     URL.revokeObjectURL(url);
   }
-
-  container.style.display = "none"; // hide after sharing
 }
 
 /* ENTER KEY SUPPORT */
