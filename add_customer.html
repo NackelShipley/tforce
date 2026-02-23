@@ -44,6 +44,7 @@ body {
     display: flex;
     flex-direction: column;
     margin: 10px;
+    min-width: 0;
 }
 
 .header {
@@ -59,6 +60,7 @@ body {
     position: relative;
     flex: 1;
     display: flex;
+    min-width: 0;
 }
 
 .book {
@@ -70,8 +72,10 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
+/* Center crease */
 .book::before {
     content: "";
     position: absolute;
@@ -90,6 +94,7 @@ body {
     gap: 40px;
     flex: 1;
     overflow-y: auto;
+    min-width: 0;
 }
 
 /* ========== PAGE CARDS ========== */
@@ -101,6 +106,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    min-width: 0;
 }
 
 .left-page::before, .right-page::before {
@@ -115,6 +121,8 @@ body {
     display: flex;
     align-items: stretch;
     height: 44px;
+    width: 100%;
+    min-width: 0;
 }
 
 .input-icon {
@@ -126,10 +134,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .input-group input {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     border: 1px solid #d1d5db;
     border-radius: 0 8px 8px 0;
     padding: 0 14px;
@@ -161,6 +171,7 @@ body {
 .zip-city-state {
     display: flex;
     gap: 12px;
+    min-width: 0;
 }
 
 .zip-city-state input {
@@ -171,6 +182,7 @@ body {
     font-size: 14px;
     outline: none;
     background: #fffef8;
+    min-width: 0;
 }
 
 #zip { width: 100px; }
@@ -233,6 +245,7 @@ input:required:valid { border-color: #34d399; }
 </head>
 
 <body>
+
 <div class="sidebar">
     <h2>Database</h2>
     <a href="#">All Customers</a>
@@ -243,9 +256,10 @@ input:required:valid { border-color: #34d399; }
 </div>
 
 <div class="main-content">
-    <div class="header">Add New Customer</div>
-    <div class="book-wrapper">
-        <div class="book">
+<div class="header">Add New Customer</div>
+
+<div class="book-wrapper">
+<div class="book">
 
 <form class="add-customer-form" method="POST" action="save_customer.php">
 
